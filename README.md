@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reyes Rebollar Properties LLC - Portfolio Management
+
+A modern real estate asset portfolio management platform built with Next.js 16, TypeScript, and shadcn/ui components.
+
+## Features
+
+- **Portfolio Overview Dashboard**: Real-time metrics showing total value, investment, equity, and returns
+- **Property Management**: Comprehensive property cards with detailed information
+- **Asset Filtering**: Filter properties by status (Active, Under Contract, etc.)
+- **Professional UI**: Clean, modern interface using shadcn/ui components
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Type Safety**: Full TypeScript implementation for robust code
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+├── app/                    # Next.js app directory
+│   ├── layout.tsx         # Root layout with Header/Footer
+│   └── page.tsx           # Portfolio dashboard page
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── Header.tsx        # Navigation header
+│   ├── Footer.tsx        # Footer component
+│   ├── MetricsCard.tsx   # Portfolio metrics display
+│   └── PropertyCard.tsx  # Individual property display
+├── lib/                   # Utility functions
+│   ├── data/             # Mock data
+│   │   └── properties.ts # Property listings
+│   ├── portfolio-utils.ts # Calculation utilities
+│   └── utils.ts          # General utilities
+├── types/                 # TypeScript type definitions
+│   └── property.ts       # Property-related types
+└── public/               # Static assets
+    └── images/           # Logo and images
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Portfolio Metrics
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The dashboard calculates and displays:
+- **Total Properties**: Count of all active and under-contract properties
+- **Portfolio Value**: Current market value of all properties
+- **Total Investment**: Sum of all purchase prices
+- **Total Equity**: Portfolio value minus investment
+- **Monthly Net Income**: Total rental income minus expenses
+- **Annual Return**: ROI percentage based on net income
 
-## Deploy on Vercel
+## Customization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Adding Properties
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Edit `lib/data/properties.ts` to add or modify properties in the portfolio.
+
+### Styling
+
+The project uses Tailwind CSS v4. Customize theme settings in `app/globals.css`.
+
+## License
+
+© 2025 Reyes Rebollar Properties LLC. All rights reserved.
+
+## Contact
+
+**Email**: info@reyesrebollar.com
