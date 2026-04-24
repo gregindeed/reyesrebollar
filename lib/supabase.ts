@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
+// Fallback placeholders prevent the build from crashing during static prerender.
+// At runtime, real values from env are always present.
 export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key"
 );
 
 export type MaintenanceRequest = {
