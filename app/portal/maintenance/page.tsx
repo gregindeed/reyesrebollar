@@ -35,8 +35,12 @@ export default function MaintenancePage() {
     setSubmitting(true);
     setError(null);
 
+    // Get tenant record by email
+    const { data: tenant } = await supabase.from("tenants").select("id").eq("email", user.email).single();
+    if (!tenant) { setError("Tenant profile not found. Contact your property manager."); setSubmitting(false); return; }
+
     const { error } = await supabase.from("maintenance_requests").insert({
-      tenant_id: user.id,
+      tenant_id: tenant.id,
       title,
       description: description || null,
       priority,

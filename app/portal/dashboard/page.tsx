@@ -40,12 +40,19 @@ export default function DashboardPage() {
 
       setUser(session.user);
 
-      const [{ data: tenantData }, { data: leaseData }, { data: reqData }] =
-        await Promise.all([
-          supabase.from("tenants").select("*").eq("id", session.user.id).single(),
-          supabase.from("leases").select("*").eq("tenant_id", session.user.id).order("start_date", { ascending: false }).limit(1).single(),
-          supabase.from("maintenance_requests").select("*").eq("tenant_id", session.user.id).order("created_at", { ascending: false }).limit(5),
-        ]);
+      // Find tenant by email (matches record created by manager)
+      const { data: tenantData } = await supabase
+        .from("tenants").select("*").eq("email", session.user.email).single();
+
+      // Update user_id link if not set
+      if (tenantData && !tenantData.user_id) {
+        await supabase.from("tenants").update({ user_id: session.user.id }).eq("id", tenantData.id);
+      }
+
+      const [{ data: leaseData }, { data: reqData }] = await Promise.all([
+        supabase.from("leases").select("*").eq("tenant_id", tenantData?.id ?? "").order("start_date", { ascending: false }).limit(1).single(),
+        supabase.from("maintenance_requests").select("*").eq("tenant_id", tenantData?.id ?? "").order("created_at", { ascending: false }).limit(5),
+      ]);
 
       setTenant(tenantData);
       setLease(leaseData);
