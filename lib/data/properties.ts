@@ -55,4 +55,21 @@ export const properties: Property[] = [
     monthlyIncome: 4300,
     expenses: 1250,
   },
+  {
+    id: "4",
+    name: "1107 Greenfield Drive",
+    address: "1107 Greenfield Dr",
+    city: "El Cajon",
+    state: "CA",
+    zipCode: "92021",
+    type: "commercial",
+    status: "active",
+    purchasePrice: 0,       // TODO: update with purchase price
+    currentValue: 0,        // TODO: update with current value
+    purchaseDate: "2024-01-01", // TODO: update with actual acquisition date
+    squareFeet: 6316,
+    description: "Commercial property zoned C36 in El Cajon. 6,316 SF lot to be offered as commercial office space. APN 484-101-02.",
+    monthlyIncome: 0,       // TODO: update when leased
+    expenses: 0,            // TODO: update with carrying costs
+  },
 ];

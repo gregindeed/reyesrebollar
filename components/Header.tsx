@@ -1,50 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="border-b bg-white">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+    <header className="bg-background/90 backdrop-blur-sm sticky top-0 z-50 border-b border-border/40">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/reyesrebollar_logo.png"
             alt="Reyes Rebollar Properties"
-            width={120}
-            height={60}
-            className="object-contain"
+            width={36}
+            height={36}
+            className="object-contain opacity-90"
           />
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">
+            <p className="text-sm font-medium tracking-wide leading-tight">
               Reyes Rebollar Properties LLC
-            </h1>
-            <p className="text-sm text-muted-foreground">Portfolio Management</p>
+            </p>
+            <p className="text-[0.65rem] tracking-[0.18em] uppercase text-muted-foreground leading-tight">
+              Real Estate Holdings
+            </p>
           </div>
         </Link>
-        <nav className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-sm font-medium hover:text-primary transition-colors"
-          >
-            Portfolio
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-medium hover:text-primary transition-colors"
-          >
-            About
-          </Link>
+
+        <nav className="flex items-center gap-8">
           <Link
             href="/properties"
-            className="text-sm font-medium hover:text-primary transition-colors"
+            className="text-xs tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors"
           >
             Properties
-          </Link>
-          <Link
-            href="/analytics"
-            className="text-sm font-medium hover:text-primary transition-colors"
-          >
-            Analytics
           </Link>
         </nav>
       </div>

@@ -1,76 +1,48 @@
+import Link from "next/link";
 import { Property } from "@/types/property";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency, getPropertyTypeLabel, getStatusColor } from "@/lib/portfolio-utils";
-import { Building2, MapPin, Calendar, TrendingUp } from "lucide-react";
 
 interface PropertyCardProps {
   property: Property;
 }
 
+const STATUS_LABEL: Record<string, string> = {
+  active: "Active",
+  sold: "Sold",
+  "under-contract": "Under Contract",
+  pending: "Pending",
+};
+
 export function PropertyCard({ property }: PropertyCardProps) {
-  const equity = property.currentValue - property.purchasePrice;
-  const equityPercent = ((equity / property.purchasePrice) * 100).toFixed(1);
-  const netIncome = (property.monthlyIncome || 0) - (property.expenses || 0);
+  const year = new Date(property.purchaseDate + "T00:00:00").getFullYear();
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg">{property.name}</CardTitle>
-            <CardDescription className="flex items-center gap-1 mt-1">
-              <MapPin className="h-3 w-3" />
-              {property.address}, {property.city}, {property.state} {property.zipCode}
-            </CardDescription>
-          </div>
-          <Badge className={getStatusColor(property.status)}>
-            {property.status.replace("-", " ")}
-          </Badge>
+    <Link href={`/properties/${property.id}`} className="block group">
+      <div className="py-7 flex items-start justify-between gap-6 group-hover:opacity-75 transition-opacity">
+        {/* Left */}
+        <div>
+          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-muted-foreground mb-2">
+            {property.city}, {property.state}
+          </p>
+          <h3 className="font-display text-xl md:text-2xl text-foreground leading-tight mb-2">
+            {property.address}
+          </h3>
+          <p className="text-xs text-muted-foreground tracking-wide">
+            {property.units ? `${property.units} units` : property.type}
+            &nbsp;·&nbsp;
+            Acquired {year}
+          </p>
         </div>
-        <div className="flex gap-2 mt-2">
-          <Badge variant="outline">{getPropertyTypeLabel(property.type)}</Badge>
-          {property.units && (
-            <Badge variant="outline">{property.units} units</Badge>
-          )}
+
+        {/* Right */}
+        <div className="flex items-center gap-4 pt-1 flex-shrink-0">
+          <span className="text-[0.65rem] tracking-[0.15em] uppercase text-muted-foreground hidden sm:block">
+            {STATUS_LABEL[property.status] ?? property.status}
+          </span>
+          <span className="text-muted-foreground group-hover:translate-x-1 transition-transform text-sm">
+            →
+          </span>
         </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">{property.description}</p>
-        
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-muted-foreground">Purchase Price</p>
-            <p className="font-semibold">{formatCurrency(property.purchasePrice)}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Current Value</p>
-            <p className="font-semibold">{formatCurrency(property.currentValue)}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Equity</p>
-            <p className="font-semibold text-green-600">
-              {formatCurrency(equity)} ({equityPercent}%)
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Net Monthly Income</p>
-            <p className="font-semibold">
-              {netIncome > 0 ? formatCurrency(netIncome) : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Square Feet</p>
-            <p className="font-semibold">{property.squareFeet.toLocaleString()} sq ft</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Purchase Date</p>
-            <p className="font-semibold">
-              {new Date(property.purchaseDate).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
 }

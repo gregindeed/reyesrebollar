@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
+import { Rye } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -9,14 +10,16 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const rye = Rye({
+  variable: "--font-rye",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Reyes Rebollar Properties LLC - Portfolio Management",
-  description: "Real estate asset portfolio management for Reyes Rebollar Properties LLC",
+  title: "Reyes Rebollar Properties LLC",
+  description:
+    "A family real estate holding company building lasting value in El Cajon, California. Rooted in Los Limones, Michoacán.",
 };
 
 export default function RootLayout({
@@ -27,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-gray-50`}
+        className={`${geistSans.variable} ${rye.variable} antialiased flex flex-col min-h-screen bg-background text-foreground`}
       >
         <Header />
         <main className="flex-1">{children}</main>
