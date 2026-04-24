@@ -36,10 +36,10 @@ export function Footer() {
                 Contact
               </p>
               <a
-                href="mailto:info@reyesrebollar.com"
+                href="mailto:reyes@reyesrebollar.com"
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                info@reyesrebollar.com
+                reyes@reyesrebollar.com
               </a>
             </div>
           </div>

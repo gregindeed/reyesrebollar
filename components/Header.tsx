@@ -30,6 +30,12 @@ export function Header() {
           >
             Properties
           </Link>
+          <Link
+            href="/portal"
+            className="text-xs tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors border border-border/60 px-3 py-1.5 rounded-lg hover:border-border"
+          >
+            Tenant Portal
+          </Link>
         </nav>
       </div>
     </header>
