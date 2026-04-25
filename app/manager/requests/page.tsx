@@ -42,8 +42,9 @@ export default function ManagerRequestsPage() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/manager/login"); return; }
-      const { data: adminData } = await supabase.from("admins").select("id").eq("id", session.user.id).single();
-      if (!adminData) { router.replace("/manager/login"); return; }
+      if (!session.user.email?.endsWith("@reyesrebollar.com")) {
+        router.replace("/manager/login"); return;
+      }
       setUser(session.user);
       await fetchRequests();
       setLoading(false);

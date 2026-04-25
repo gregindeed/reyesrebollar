@@ -34,9 +34,10 @@ export default function ManagerDashboard() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/manager/login"); return; }
 
-      // Admin check
-      const { data: adminData } = await supabase.from("admins").select("id").eq("id", session.user.id).single();
-      if (!adminData) { setUnauthorized(true); setLoading(false); return; }
+      // Admin check — any @reyesrebollar.com email is authorized
+      if (!session.user.email?.endsWith("@reyesrebollar.com")) {
+        setUnauthorized(true); setLoading(false); return;
+      }
 
       setUser(session.user);
 
