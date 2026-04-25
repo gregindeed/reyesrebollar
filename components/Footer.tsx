@@ -42,6 +42,25 @@ export function Footer() {
                 reyes@reyesrebollar.com
               </a>
             </div>
+            <div>
+              <p className="text-[0.65rem] tracking-[0.2em] uppercase text-muted-foreground mb-4">
+                Admin
+              </p>
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/manager/login"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Manager Portal
+                </Link>
+                <Link
+                  href="/portal/login"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Tenant Portal
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
