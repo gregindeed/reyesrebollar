@@ -35,7 +35,7 @@ export default function ManagerRequestsPage() {
       .from("maintenance_requests")
       .select("*, tenants(full_name, email, unit)")
       .order("created_at", { ascending: false });
-    setRequests((data as Request[]) ?? []);
+    setRequests((data as unknown as Request[]) ?? []);
   };
 
   useEffect(() => {

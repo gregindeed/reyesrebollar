@@ -52,7 +52,7 @@ export default function ManagerDashboard() {
         urgent: allRequests.filter(r => r.priority === "urgent").length,
         inProgress: allRequests.filter(r => r.status === "in_progress").length,
       });
-      setRecent(allRequests as RecentRequest[]);
+      setRecent(allRequests as unknown as RecentRequest[]);
       setLoading(false);
     };
     init();

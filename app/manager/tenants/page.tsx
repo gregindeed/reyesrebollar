@@ -32,7 +32,7 @@ export default function ManagerTenantsPage() {
 
   const fetchTenants = async () => {
     const { data } = await supabase.from("tenants").select("*, leases(property_address, rent_amount, start_date, end_date)").order("created_at", { ascending: false });
-    setTenants((data as Tenant[]) ?? []);
+    setTenants((data as unknown as Tenant[]) ?? []);
   };
 
   useEffect(() => {
