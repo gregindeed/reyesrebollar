@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Theme } from "@radix-ui/themes";
+import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 
@@ -21,10 +23,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} antialiased bg-background text-foreground`}
-      >
-        <ConditionalLayout>{children}</ConditionalLayout>
+      <body className={`${geistSans.variable} antialiased`}>
+        <Theme
+          accentColor="bronze"
+          grayColor="sand"
+          radius="small"
+          scaling="100%"
+          panelBackground="solid"
+        >
+          <ConditionalLayout>{children}</ConditionalLayout>
+        </Theme>
       </body>
     </html>
   );

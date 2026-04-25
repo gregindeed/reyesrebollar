@@ -1,6 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ── Radix Themes overrides — map to our earth tone palette ── */
+.radix-themes {
+  /* Page background: warm sand */
+  --color-background: oklch(0.93 0.02 80);
+  /* Use Geist as the type face throughout */
+  --default-font-family: var(--font-geist-sans), system-ui, sans-serif;
+  --heading-font-family: var(--font-geist-sans), system-ui, sans-serif;
+  --heading-font-weight: 300;
+  --heading-letter-spacing: -0.025em;
+  --strong-font-weight: 500;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { Heading, Text } from "@radix-ui/themes";
 import type { User } from "@supabase/supabase-js";
 
 type Tenant = {
@@ -81,8 +82,8 @@ export default function ManagerTenantsPage() {
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-[0.62rem] tracking-[0.2em] uppercase text-terracotta mb-2">Management</p>
-            <h1 className="font-display text-foreground" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>Tenants</h1>
+            <Text size="1" className="tracking-[0.2em] uppercase text-terracotta block mb-2">Management</Text>
+            <Heading size="8" weight="light" trim="start">Tenants</Heading>
           </div>
           <button onClick={() => setShowForm(!showForm)}
             className="text-xs tracking-[0.12em] uppercase bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { Heading, Text } from "@radix-ui/themes";
 import type { User } from "@supabase/supabase-js";
 
 type Stats = { tenants: number; open: number; urgent: number; inProgress: number };
@@ -82,10 +83,8 @@ export default function ManagerDashboard() {
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         {/* Header */}
         <div className="mb-10">
-          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-terracotta mb-2">Overview</p>
-          <h1 className="font-display text-foreground" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>
-            Manager Dashboard
-          </h1>
+          <Text size="1" className="tracking-[0.2em] uppercase text-terracotta block mb-2">Overview</Text>
+          <Heading size="8" weight="light" trim="start">Manager Dashboard</Heading>
         </div>
 
         {/* Stats */}
@@ -106,7 +105,7 @@ export default function ManagerDashboard() {
         {/* Recent requests */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-[0.62rem] tracking-[0.18em] uppercase text-muted-foreground">Recent Requests</p>
+            <Text size="1" className="tracking-[0.18em] uppercase text-muted-foreground">Recent Requests</Text>
             <Link href="/manager/requests" className="text-[0.62rem] tracking-[0.12em] uppercase text-primary hover:opacity-70 transition-opacity">
               View all →
             </Link>

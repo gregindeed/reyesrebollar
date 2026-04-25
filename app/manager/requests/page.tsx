@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { Heading, Text } from "@radix-ui/themes";
 import type { User } from "@supabase/supabase-js";
 
 type Request = {
@@ -68,8 +69,8 @@ export default function ManagerRequestsPage() {
     <div className="min-h-screen">
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="mb-10">
-          <p className="text-[0.62rem] tracking-[0.2em] uppercase text-terracotta mb-2">Queue</p>
-          <h1 className="font-display text-foreground" style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>Maintenance Requests</h1>
+          <Text size="1" className="tracking-[0.2em] uppercase text-terracotta block mb-2">Queue</Text>
+          <Heading size="8" weight="light" trim="start">Maintenance Requests</Heading>
         </div>
 
         {/* Filters */}

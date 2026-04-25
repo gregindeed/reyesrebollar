@@ -17,6 +17,9 @@ export function ManagerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Don't show sidebar on login/entry pages
+  if (pathname === "/manager/login" || pathname === "/manager") return null;
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setEmail(session?.user?.email ?? null);
