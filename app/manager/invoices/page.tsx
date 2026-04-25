@@ -106,7 +106,7 @@ export default function InvoicesPage() {
     ]);
     setInvoices((invs as Invoice[]) ?? []);
     setTenants(ts ?? []);
-    setLeases((ls as LeaseOpt[]) ?? []);
+    setLeases((ls as unknown as LeaseOpt[]) ?? []);
     setLoading(false);
   };
 
