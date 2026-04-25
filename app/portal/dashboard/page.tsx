@@ -31,6 +31,7 @@ export default function DashboardPage() {
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [lease, setLease] = useState<Lease | null>(null);
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+  const [docCount, setDocCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,14 +50,16 @@ export default function DashboardPage() {
         await supabase.from("tenants").update({ user_id: session.user.id }).eq("id", tenantData.id);
       }
 
-      const [{ data: leaseData }, { data: reqData }] = await Promise.all([
+      const [{ data: leaseData }, { data: reqData }, { count: dCount }] = await Promise.all([
         supabase.from("leases").select("*").eq("tenant_id", tenantData?.id ?? "").order("start_date", { ascending: false }).limit(1).single(),
         supabase.from("maintenance_requests").select("*").eq("tenant_id", tenantData?.id ?? "").order("created_at", { ascending: false }).limit(5),
+        supabase.from("documents").select("*", { count: "exact", head: true }).eq("is_shared", true).in("entity_id", [tenantData?.id ?? ""]),
       ]);
 
       setTenant(tenantData);
       setLease(leaseData);
       setRequests(reqData ?? []);
+      setDocCount(dCount ?? 0);
       setLoading(false);
     };
     init();
@@ -191,6 +194,33 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Documents */}
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-[0.62rem] tracking-[0.18em] uppercase text-muted-foreground">Documents</p>
+            <Link href="/portal/documents"
+              className="text-[0.62rem] tracking-[0.12em] uppercase text-primary hover:opacity-70 transition-opacity">
+              View all →
+            </Link>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-5">
+            {docCount > 0 ? (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-foreground">
+                  {docCount} document{docCount !== 1 ? "s" : ""} shared with you
+                </p>
+                <Link href="/portal/documents"
+                  className="text-xs tracking-[0.1em] uppercase text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors">
+                  View &amp; Download
+                </Link>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No documents shared yet.</p>
+            )}
+          </div>
+        </div>
+
       </main>
     </div>
   );
