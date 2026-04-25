@@ -5,6 +5,25 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Property, Unit } from "@/lib/supabase";
 
+type PropertyMeta = {
+  street_view_url?: string;
+  beds?: number;
+  baths?: number;
+  sqft?: number;
+  lot_sqft?: number;
+  year_built?: number;
+  zestimate?: number;
+  last_sale_price?: number;
+  last_sale_date?: string;
+  apn?: string;
+  photos?: string[];
+  sale_history?: { date: string; price: number; event: string }[];
+  raw_source?: string;
+  fetched_at?: string;
+};
+
+type PropertyWithMeta = Property & { meta?: PropertyMeta; meta_fetched_at?: string };
+
 const UNIT_STATUS_STYLE: Record<string, string> = {
   vacant:          "text-green-700 bg-green-50 border-green-200",
   occupied:        "text-blue-700 bg-blue-50 border-blue-200",
@@ -59,7 +78,32 @@ export default function PropertiesPage() {
     setLoading(false);
   };
 
-  const selected = properties.find((p) => p.id === selectedId);
+  const [enriching, setEnriching] = useState(false);
+
+  const selected = (properties as PropertyWithMeta[]).find((p) => p.id === selectedId);
+
+  const handleEnrich = async () => {
+    if (!selectedId) return;
+    setEnriching(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/enrich-property`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ property_id: selectedId }),
+        }
+      );
+      await fetchProperties();
+    } catch (e) {
+      console.error("Enrich failed:", e);
+    }
+    setEnriching(false);
+  };
 
   const pField = (key: keyof typeof propertyForm, val: string) =>
     setPropertyForm((f) => ({ ...f, [key]: val }));
@@ -220,34 +264,83 @@ export default function PropertiesPage() {
             ) : (
               <div className="space-y-4">
 
-                {/* Property Info */}
-                <div className="bg-card border border-border/50 rounded-xl p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h2 className="text-base font-semibold text-foreground">{selected.name}</h2>
-                      <p className="text-xs text-muted-foreground mt-0.5">{selected.address}, {selected.city}, {selected.state} {selected.zip_code}</p>
+                {/* Property Info + Enriched Data */}
+                <div className="bg-card border border-border/50 rounded-xl overflow-hidden">
+
+                  {/* Street View / Photo */}
+                  {(() => {
+                    const meta = (selected as PropertyWithMeta).meta;
+                    const photoUrl = meta?.photos?.[0] ?? meta?.street_view_url;
+                    if (photoUrl) return (
+                      <img src={photoUrl} alt={selected.name}
+                        className="w-full h-44 object-cover" />
+                    );
+                    const svFallback = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY
+                      ? `https://maps.googleapis.com/maps/api/streetview?size=800x350&location=${encodeURIComponent(`${selected.address}, ${selected.city}, ${selected.state}`)}&fov=80&pitch=5&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}`
+                      : null;
+                    if (svFallback) return (
+                      <img src={svFallback} alt={selected.name}
+                        className="w-full h-44 object-cover" />
+                    );
+                    return null;
+                  })()}
+
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h2 className="text-base font-semibold text-foreground">{selected.name}</h2>
+                        <p className="text-xs text-muted-foreground mt-0.5">{selected.address}, {selected.city}, {selected.state} {selected.zip_code}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[0.6rem] tracking-[0.1em] uppercase px-2 py-1 rounded-full border ${selected.type === "commercial" ? "text-purple-700 bg-purple-50 border-purple-200" : "text-blue-700 bg-blue-50 border-blue-200"}`}>
+                          {selected.type}
+                        </span>
+                        <button onClick={handleEnrich} disabled={enriching}
+                          className="text-[0.58rem] tracking-[0.1em] uppercase text-muted-foreground border border-border/50 px-2 py-1 rounded-lg hover:text-foreground hover:border-border transition-colors disabled:opacity-40">
+                          {enriching ? "Fetching…" : (selected as PropertyWithMeta).meta ? "Refresh" : "Fetch Data"}
+                        </button>
+                      </div>
                     </div>
-                    <span className={`text-[0.6rem] tracking-[0.1em] uppercase px-2 py-1 rounded-full border ${selected.type === "commercial" ? "text-purple-700 bg-purple-50 border-purple-200" : "text-blue-700 bg-blue-50 border-blue-200"}`}>
-                      {selected.type}
-                    </span>
-                  </div>
-                  {selected.notes && <p className="text-xs text-muted-foreground">{selected.notes}</p>}
-                  <div className="flex gap-4 mt-3 pt-3 border-t border-border/40">
-                    <div>
-                      <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Units</p>
-                      <p className="text-sm font-semibold text-foreground">{(selected.units ?? []).length}</p>
-                    </div>
-                    <div>
-                      <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Vacant</p>
-                      <p className="text-sm font-semibold text-green-700">
-                        {(selected.units ?? []).filter((u: Unit) => u.status === "vacant").length}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Monthly Rent</p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {fmt((selected.units ?? []).reduce((s: number, u: Unit) => s + u.rent_amount, 0))}
-                      </p>
+
+                    {/* Enriched stats */}
+                    {(() => {
+                      const meta = (selected as PropertyWithMeta).meta;
+                      if (!meta) return (
+                        <p className="text-xs text-muted-foreground mb-3">Click "Fetch Data" to pull property details from public records.</p>
+                      );
+                      return (
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                          {meta.beds && <Stat label="Beds" value={String(meta.beds)} />}
+                          {meta.baths && <Stat label="Baths" value={String(meta.baths)} />}
+                          {meta.sqft && <Stat label="Sq Ft" value={Number(meta.sqft).toLocaleString()} />}
+                          {meta.lot_sqft && <Stat label="Lot Sq Ft" value={Number(meta.lot_sqft).toLocaleString()} />}
+                          {meta.year_built && <Stat label="Year Built" value={String(meta.year_built)} />}
+                          {meta.zestimate && <Stat label="Est. Value" value={fmt(Number(meta.zestimate))} />}
+                          {meta.last_sale_price && <Stat label="Last Sale" value={fmt(Number(meta.last_sale_price))} />}
+                          {meta.apn && <Stat label="APN" value={String(meta.apn)} />}
+                        </div>
+                      );
+                    })()}
+
+                    {selected.notes && <p className="text-xs text-muted-foreground mt-1">{selected.notes}</p>}
+
+                    <div className="flex gap-4 mt-3 pt-3 border-t border-border/40">
+                      <div>
+                        <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Units</p>
+                        <p className="text-sm font-semibold text-foreground">{(selected.units ?? []).length}</p>
+                      </div>
+                      <div>
+                        <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Vacant</p>
+                        <p className="text-sm font-semibold text-green-700">
+                          {(selected.units ?? []).filter((u: Unit) => u.status === "vacant").length}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[0.58rem] uppercase tracking-wide text-muted-foreground">Monthly Rent</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {fmt((selected.units ?? []).reduce((s: number, u: Unit) => s + u.rent_amount, 0))}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -328,6 +421,15 @@ export default function PropertiesPage() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-muted/40 rounded-lg p-2.5">
+      <p className="text-[0.55rem] uppercase tracking-wide text-muted-foreground mb-0.5">{label}</p>
+      <p className="text-xs font-semibold text-foreground">{value}</p>
     </div>
   );
 }
