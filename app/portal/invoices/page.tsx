@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 
 type Payment = {
@@ -104,22 +103,6 @@ export default function TenantInvoicesPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-white border-b border-border/40 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <Link href="/portal/dashboard" className="flex items-center gap-3">
-            <Image src="/reyesrebollar_logo.png" alt="RRP" width={32} height={32} className="object-contain opacity-85" />
-            <div>
-              <p className="text-sm font-medium leading-tight">Reyes Rebollar Properties</p>
-              <p className="text-[0.6rem] tracking-[0.16em] uppercase text-muted-foreground leading-tight">Tenant Portal</p>
-            </div>
-          </Link>
-          <Link href="/portal/dashboard"
-            className="text-[0.65rem] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors">
-            ← Dashboard
-          </Link>
-        </div>
-      </header>
-
       <main className="container mx-auto px-6 py-14 max-w-2xl">
         <div className="mb-8">
           <p className="text-[0.65rem] tracking-[0.22em] uppercase text-terracotta mb-3">Billing</p>

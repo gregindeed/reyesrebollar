@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { supabase, type Tenant, type Lease, type MaintenanceRequest } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -73,10 +72,6 @@ export default function DashboardPage() {
     init();
   }, [router]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.replace("/portal/login");
-  };
 
   if (loading) {
     return (
@@ -94,28 +89,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Portal Nav */}
-      <header className="bg-white border-b border-border/40 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/reyesrebollar_logo.png" alt="RRP" width={32} height={32} className="object-contain opacity-85" />
-            <div>
-              <p className="text-sm font-medium leading-tight">Reyes Rebollar Properties</p>
-              <p className="text-[0.6rem] tracking-[0.16em] uppercase text-muted-foreground leading-tight">Tenant Portal</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-6">
-            <span className="text-xs text-muted-foreground hidden sm:block">{user?.email}</span>
-            <button
-              onClick={handleSignOut}
-              className="text-[0.65rem] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
-
       <main className="container mx-auto px-6 py-12 max-w-3xl">
         {/* Welcome */}
         <div className="mb-8">

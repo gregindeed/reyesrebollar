@@ -1,17 +1,15 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Tenant Portal — Reyes Rebollar Properties LLC",
-  description: "Tenant portal for Reyes Rebollar Properties LLC",
-};
+import { usePathname } from "next/navigation";
+import { PortalNav } from "@/components/PortalNav";
 
-export default function PortalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PortalLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLogin = pathname === "/portal/login" || pathname === "/portal";
+
   return (
     <div className="min-h-screen bg-background">
+      {!isLogin && <PortalNav />}
       {children}
     </div>
   );
