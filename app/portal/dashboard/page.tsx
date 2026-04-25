@@ -32,6 +32,7 @@ export default function DashboardPage() {
   const [lease, setLease] = useState<Lease | null>(null);
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
   const [docCount, setDocCount] = useState(0);
+  const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,16 +51,23 @@ export default function DashboardPage() {
         await supabase.from("tenants").update({ user_id: session.user.id }).eq("id", tenantData.id);
       }
 
-      const [{ data: leaseData }, { data: reqData }, { count: dCount }] = await Promise.all([
+      const [{ data: leaseData }, { data: reqData }, { count: dCount }, { data: invData }] = await Promise.all([
         supabase.from("leases").select("*").eq("tenant_id", tenantData?.id ?? "").order("start_date", { ascending: false }).limit(1).single(),
         supabase.from("maintenance_requests").select("*").eq("tenant_id", tenantData?.id ?? "").order("created_at", { ascending: false }).limit(5),
         supabase.from("documents").select("*", { count: "exact", head: true }).eq("is_shared", true).in("entity_id", [tenantData?.id ?? ""]),
+        supabase.from("invoices").select("amount, status, payments(amount_paid)").eq("tenant_id", tenantData?.id ?? "").neq("status", "paid").neq("status", "canceled").neq("status", "draft"),
       ]);
+
+      const bal = (invData ?? []).reduce((s: number, inv: { amount: number; payments: { amount_paid: number }[] }) => {
+        const paid = inv.payments.reduce((ps, p) => ps + p.amount_paid, 0);
+        return s + inv.amount - paid;
+      }, 0);
 
       setTenant(tenantData);
       setLease(leaseData);
       setRequests(reqData ?? []);
       setDocCount(dCount ?? 0);
+      setBalance(bal);
       setLoading(false);
     };
     init();
@@ -110,11 +118,30 @@ export default function DashboardPage() {
 
       <main className="container mx-auto px-6 py-12 max-w-3xl">
         {/* Welcome */}
-        <div className="mb-12">
+        <div className="mb-8">
           <p className="text-[0.65rem] tracking-[0.2em] uppercase text-terracotta mb-3">Welcome back</p>
           <h1 className="font-display text-foreground" style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)" }}>
             {tenant?.full_name ?? user?.email?.split("@")[0]}
           </h1>
+        </div>
+
+        {/* Balance */}
+        <div className="mb-8">
+          <div className={`rounded-xl p-5 border ${balance > 0 ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[0.6rem] uppercase tracking-wide text-muted-foreground mb-1">Current Balance</p>
+                <p className={`text-3xl font-bold ${balance > 0 ? "text-red-700" : "text-green-700"}`}>
+                  {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 }).format(balance)}
+                </p>
+                {balance === 0 && <p className="text-xs text-green-700 mt-1">You're all caught up!</p>}
+              </div>
+              <Link href="/portal/invoices"
+                className="text-xs tracking-[0.1em] uppercase text-primary border border-primary/30 px-3 py-2 rounded-lg hover:bg-primary/5 transition-colors">
+                View Invoices
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Lease card */}
