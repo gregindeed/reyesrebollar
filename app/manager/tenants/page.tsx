@@ -132,18 +132,33 @@ export default function TenantsPage() {
 
   const handleInvite = async (tenant: Tenant) => {
     setInviting(true); setError(null); setSuccess(null);
-    const { error } = await supabase.auth.signInWithOtp({
-      email: tenant.email,
-      options: { emailRedirectTo: "https://reyesrebollar.com/portal/dashboard" },
-    });
-    if (error) {
-      setError(`Invite failed: ${error.message}`);
-    } else {
-      await supabase.from("tenants")
-        .update({ portal_invited_at: new Date().toISOString() })
-        .eq("id", tenant.id);
-      await fetchTenants();
-      setSuccess(`Portal invite sent to ${tenant.email}`);
+    try {
+      // Use Edge Function for branded invite email with auto-generated magic link
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-portal-invite`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({
+            tenant_id: tenant.id,
+            tenant_name: tenant.full_name ?? tenant.company_name,
+            tenant_email: tenant.email,
+          }),
+        }
+      );
+      const result = await res.json();
+      if (result.success) {
+        await fetchTenants();
+        setSuccess(`Portal invite sent to ${tenant.email}`);
+      } else {
+        setError(`Invite failed: ${result.error}`);
+      }
+    } catch (err) {
+      setError("Invite failed. Please try again.");
     }
     setInviting(false);
   };
