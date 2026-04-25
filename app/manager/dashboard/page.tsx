@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { ManagerNav } from "@/components/ManagerNav";
 import type { User } from "@supabase/supabase-js";
 
 type Stats = { tenants: number; open: number; urgent: number; inProgress: number };
@@ -80,7 +79,6 @@ export default function ManagerDashboard() {
 
   return (
     <div className="min-h-screen">
-      <ManagerNav email={user?.email} />
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         {/* Header */}
         <div className="mb-10">

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ManagerNav } from "@/components/ManagerNav";
 import type { User } from "@supabase/supabase-js";
 
 type Request = {
@@ -67,7 +66,6 @@ export default function ManagerRequestsPage() {
 
   return (
     <div className="min-h-screen">
-      <ManagerNav email={user?.email} />
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="mb-10">
           <p className="text-[0.62rem] tracking-[0.2em] uppercase text-terracotta mb-2">Queue</p>

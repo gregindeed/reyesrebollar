@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { ManagerNav } from "@/components/ManagerNav";
 import type { User } from "@supabase/supabase-js";
 
 type Tenant = {
@@ -79,7 +78,6 @@ export default function ManagerTenantsPage() {
 
   return (
     <div className="min-h-screen">
-      <ManagerNav email={user?.email} />
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="flex items-end justify-between mb-10">
           <div>
