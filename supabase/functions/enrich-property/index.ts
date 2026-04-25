@@ -1,5 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 const RAPIDAPI_KEY  = Deno.env.get("RAPIDAPI_KEY")!;
 const GOOGLE_KEY    = Deno.env.get("GOOGLE_MAPS_KEY")!;
 const SUPABASE_URL  = Deno.env.get("SUPABASE_URL")!;
@@ -82,6 +88,11 @@ function extractPropertyData(raw: Record<string, unknown>): Record<string, unkno
 }
 
 Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: CORS });
+  }
+
   try {
     const { property_id } = await req.json();
 
@@ -92,7 +103,7 @@ Deno.serve(async (req) => {
       .single();
 
     if (error || !property) {
-      return new Response(JSON.stringify({ error: "Property not found" }), { status: 404 });
+      return new Response(JSON.stringify({ error: "Property not found" }), { status: 404, headers: CORS });
     }
 
     const { address, city, state, zip_code } = property;
@@ -132,10 +143,13 @@ Deno.serve(async (req) => {
       .eq("id", property_id);
 
     return new Response(JSON.stringify({ success: true, meta }), {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...CORS, "Content-Type": "application/json" },
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { ...CORS, "Content-Type": "application/json" },
+    });
   }
 });

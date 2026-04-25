@@ -86,18 +86,9 @@ export default function PropertiesPage() {
     if (!selectedId) return;
     setEnriching(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/enrich-property`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`,
-          },
-          body: JSON.stringify({ property_id: selectedId }),
-        }
-      );
+      await supabase.functions.invoke("enrich-property", {
+        body: { property_id: selectedId },
+      });
       await fetchProperties();
     } catch (e) {
       console.error("Enrich failed:", e);
