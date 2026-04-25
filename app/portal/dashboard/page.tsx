@@ -248,7 +248,51 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Notices */}
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-[0.62rem] tracking-[0.18em] uppercase text-muted-foreground">Notices</p>
+            <Link href="/portal/notices"
+              className="text-[0.62rem] tracking-[0.12em] uppercase text-primary hover:opacity-70 transition-opacity">
+              View all →
+            </Link>
+          </div>
+          <LatestNotice />
+        </div>
+
       </main>
+    </div>
+  );
+}
+
+function LatestNotice() {
+  const [notice, setNotice] = useState<{ subject: string; type: string; sent_at: string } | null>(null);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    supabase.from("notices")
+      .select("subject, type, sent_at")
+      .order("sent_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => { setNotice(data); setChecked(true); });
+  }, []);
+
+  if (!checked) return <div className="bg-card border border-border/50 rounded-xl p-5 h-14 animate-pulse" />;
+
+  return (
+    <div className="bg-card border border-border/50 rounded-xl p-5">
+      {notice ? (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-foreground truncate">{notice.subject}</p>
+          <Link href="/portal/notices"
+            className="text-xs tracking-[0.1em] uppercase text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors flex-shrink-0">
+            Read
+          </Link>
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">No notices from your manager yet.</p>
+      )}
     </div>
   );
 }
