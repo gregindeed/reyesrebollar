@@ -8,8 +8,12 @@ import { supabase } from "@/lib/supabase";
 
 const links = [
   { href: "/manager/dashboard", label: "Dashboard" },
+  { href: "/manager/properties", label: "Properties" },
   { href: "/manager/tenants", label: "Tenants" },
+  { href: "/manager/leases", label: "Leases" },
+  { href: "/manager/invoices", label: "Invoices" },
   { href: "/manager/requests", label: "Maintenance" },
+  { href: "/manager/notices", label: "Notices" },
 ];
 
 export function ManagerSidebar() {
