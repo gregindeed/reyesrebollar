@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 
 const links = [
   { href: "/manager/dashboard", label: "Dashboard" },
@@ -14,6 +15,7 @@ const links = [
   { href: "/manager/invoices", label: "Invoices" },
   { href: "/manager/requests", label: "Maintenance" },
   { href: "/manager/notices", label: "Notices" },
+  { href: "/manager/signatures", label: "Signatures" },
 ];
 
 export function ManagerSidebar() {
@@ -42,15 +44,15 @@ export function ManagerSidebar() {
       <div className="p-5 border-b border-border/40">
         <Link href="/manager/dashboard" className="flex items-center gap-2.5">
           <Image
-            src="/reyesrebollar_logo.png"
-            alt="RRP"
+            src={siteConfig.logoPath}
+            alt={siteConfig.companyShort}
             width={28}
             height={28}
             className="object-contain opacity-80"
           />
           <div>
             <p className="text-xs font-semibold tracking-wide leading-tight text-foreground">
-              Reyes Rebollar
+              {siteConfig.companyShort}
             </p>
             <p className="text-[0.58rem] tracking-[0.16em] uppercase text-terracotta leading-tight mt-0.5">
               Manager
