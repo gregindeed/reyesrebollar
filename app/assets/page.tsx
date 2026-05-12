@@ -171,7 +171,7 @@ function AssetCard({
               fontWeight:    500,
               letterSpacing: "0.06em",
               textTransform: "uppercase",
-              color:         "var(--terracotta)",
+              color:         "oklch(0.52 0.11 42)",
               marginTop:     "2px",
             }}
           >
@@ -183,7 +183,7 @@ function AssetCard({
           style={{
             margin:     0,
             fontSize:   "12px",
-            color:      "var(--muted-fg)",
+            color:      "var(--muted-foreground)",
             lineHeight: 1.5,
             flex:       1,
           }}
@@ -208,7 +208,7 @@ function AssetCard({
             style={{
               flex:         1,
               fontSize:     "10.5px",
-              color:        "var(--muted-fg)",
+              color:        "var(--muted-foreground)",
               overflow:     "hidden",
               textOverflow: "ellipsis",
               whiteSpace:   "nowrap",
@@ -229,7 +229,7 @@ function AssetCard({
               padding:      "3px 8px",
               fontSize:     "10px",
               fontWeight:   500,
-              color:        isCopied ? "oklch(0.95 0.015 78)" : "var(--muted-fg)",
+              color:        isCopied ? "oklch(0.95 0.015 78)" : "var(--muted-foreground)",
               transition:   "all 0.15s ease",
               whiteSpace:   "nowrap",
             }}
@@ -277,7 +277,7 @@ export default function AssetsPage() {
             fontWeight:    500,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color:         "var(--terracotta)",
+            color:         "oklch(0.52 0.11 42)",
             marginBottom:  "8px",
           }}
         >
@@ -299,7 +299,7 @@ export default function AssetsPage() {
           style={{
             margin:     0,
             fontSize:   "15px",
-            color:      "var(--muted-fg)",
+            color:      "var(--muted-foreground)",
             maxWidth:   "560px",
             lineHeight: 1.6,
           }}
@@ -321,7 +321,7 @@ export default function AssetsPage() {
               borderRadius: "100px",
               border:       `1px solid ${activeCategory === cat ? "oklch(0.35 0.055 45)" : "var(--border)"}`,
               background:   activeCategory === cat ? "oklch(0.35 0.055 45)" : "var(--card)",
-              color:        activeCategory === cat ? "oklch(0.95 0.015 78)" : "var(--muted-fg)",
+              color:        activeCategory === cat ? "oklch(0.95 0.015 78)" : "var(--muted-foreground)",
               fontSize:     "13px",
               fontWeight:   500,
               cursor:       "pointer",
@@ -360,7 +360,7 @@ export default function AssetsPage() {
           border:      "1px solid var(--border)",
           borderRadius:"var(--radius)",
           fontSize:    "12px",
-          color:       "var(--muted-fg)",
+          color:       "var(--muted-foreground)",
           lineHeight:  1.6,
         }}
       >

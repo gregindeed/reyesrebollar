@@ -5,7 +5,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,     // Required for static export
   },
-  reactCompiler: true,
+  // reactCompiler disabled — causes Turbopack panics with motion/react inline
+  // transition objects. Re-enable once React Compiler stable + motion compatible.
+  // reactCompiler: true,
 };
 
 export default nextConfig;
