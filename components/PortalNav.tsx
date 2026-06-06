@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 
 const links = [
   { href: "/portal/dashboard",    label: "Home" },
@@ -28,9 +29,9 @@ export function PortalNav() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/portal/dashboard" className="flex items-center gap-3 flex-shrink-0">
-            <Image src="/reyesrebollar_logo.png" alt="RRP" width={30} height={30} className="object-contain opacity-85" />
+            <Image src={siteConfig.logoPath} alt={siteConfig.companyShort} width={30} height={30} className="object-contain opacity-85" />
             <div>
-              <p className="text-xs font-semibold leading-tight">Reyes Rebollar</p>
+              <p className="text-xs font-semibold leading-tight">{siteConfig.companyShort}</p>
               <p className="text-[0.58rem] tracking-[0.14em] uppercase text-muted-foreground leading-tight">Tenant Portal</p>
             </div>
           </Link>

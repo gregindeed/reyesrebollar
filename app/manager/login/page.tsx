@@ -1,7 +1,21 @@
 "use client";
+// app/manager/login/page.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Manager authentication — multi-tenant aware.
+//
+// Access control is enforced via the `company_members` table in Supabase.
+// After a successful sign-in, we verify the user has an active membership
+// for NEXT_PUBLIC_COMPANY_ID.  If not, they are signed out immediately.
+//
+// Self-signup ("Set up account") creates the auth.users row only.
+// The company owner must then run the Step 10 SQL from the multitenant
+// migration to insert the new user into company_members before they can log in.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { COMPANY_ID, siteConfig } from "@/site.config";
 import Image from "next/image";
 
 type Mode = "signin" | "setup" | "forgot";
@@ -18,41 +32,109 @@ export default function ManagerLoginPage() {
 
   const reset = () => { setError(null); setSuccess(null); setPassword(""); setConfirm(""); };
 
+  /** After a successful auth sign-in, verify company_members membership. */
+  async function verifyCompanyMembership(userId: string): Promise<boolean> {
+    if (!COMPANY_ID) {
+      setError(
+        "This deployment is missing NEXT_PUBLIC_COMPANY_ID. " +
+        "Contact your administrator."
+      );
+      await supabase.auth.signOut();
+      return false;
+    }
+
+    const { data, error: queryError } = await supabase
+      .from("company_members")
+      .select("id, status")
+      .eq("user_id", userId)
+      .eq("company_id", COMPANY_ID)
+      .single();
+
+    if (queryError || !data) {
+      await supabase.auth.signOut();
+      setError(
+        "Your account is not authorized for this portal. " +
+        "Contact your company administrator."
+      );
+      return false;
+    }
+
+    if (data.status !== "active") {
+      await supabase.auth.signOut();
+      setError(
+        `Your account status is "${data.status}". ` +
+        "Contact your administrator to activate it."
+      );
+      return false;
+    }
+
+    return true;
+  }
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError(error.message === "Invalid login credentials"
-        ? "Incorrect email or password. First time? Use 'Set up account' below."
-        : error.message);
-    } else {
-      router.replace("/manager/dashboard");
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (authError) {
+      setError(
+        authError.message === "Invalid login credentials"
+          ? "Incorrect email or password."
+          : authError.message
+      );
+      setLoading(false);
+      return;
     }
+
+    const authorized = await verifyCompanyMembership(data.user.id);
+    if (authorized) router.replace("/manager/dashboard");
     setLoading(false);
   };
 
   const handleSetup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) { setError("Passwords don't match."); return; }
-    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
-    if (!email.endsWith("@reyesrebollar.com")) {
-      setError("Only @reyesrebollar.com emails can access this portal.");
+    if (password.length < 8)  { setError("Password must be at least 8 characters."); return; }
+
+    setLoading(true); setError(null);
+
+    const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
       return;
     }
-    setLoading(true); setError(null);
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      setError(error.message);
+
+    if (!data.user) {
+      // Email confirmation required — user exists but isn't confirmed yet
+      setSuccess(
+        "Account created! An administrator must add you to company_members before you can log in. " +
+        "Once that's done, return here to sign in."
+      );
+      setMode("signin");
+      setLoading(false);
+      return;
+    }
+
+    // Account created and auto-confirmed — try signing in, then check membership
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({ email, password });
+
+    if (signInError || !signInData) {
+      setSuccess("Account created! An administrator must add you to company_members before you can log in.");
+      setMode("signin");
+      setLoading(false);
+      return;
+    }
+
+    const authorized = await verifyCompanyMembership(signInData.user.id);
+    if (authorized) {
+      router.replace("/manager/dashboard");
     } else {
-      // Try signing in immediately (works when email confirmation is off)
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) {
-        setSuccess("Account created! You can now sign in.");
-        setMode("signin");
-      } else {
-        router.replace("/manager/dashboard");
-      }
+      // verifyCompanyMembership already set the error and signed out
+      setMode("signin");
     }
     setLoading(false);
   };
@@ -60,10 +142,10 @@ export default function ManagerLoginPage() {
   const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setError(null);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://reyesrebollar.com/manager/reset-password",
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteConfig.siteUrl}/manager/reset-password`,
     });
-    if (error) setError(error.message);
+    if (resetError) setError(resetError.message);
     else setSuccess("Password reset link sent. Check your email.");
     setLoading(false);
   };
@@ -73,14 +155,14 @@ export default function ManagerLoginPage() {
       {/* Logo */}
       <div className="mb-10 text-center">
         <Image
-          src="/reyesrebollar_logo.png"
-          alt="RRP"
+          src={siteConfig.logoPath}
+          alt={siteConfig.companyShort}
           width={48}
           height={48}
           className="object-contain mx-auto mb-4 opacity-85"
         />
         <p className="text-xl font-light tracking-wide text-foreground">
-          Reyes Rebollar Properties
+          {siteConfig.companyName}
         </p>
         <p className="text-[0.62rem] tracking-[0.18em] uppercase text-terracotta mt-1">
           Manager Portal
@@ -97,10 +179,14 @@ export default function ManagerLoginPage() {
             <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
               Sign in with your email and password.
             </p>
-            {success && <p className="text-xs text-green-700 bg-green-50 px-3 py-2 rounded-lg mb-4">{success}</p>}
+            {success && (
+              <p className="text-xs text-green-700 bg-green-50 px-3 py-2 rounded-lg mb-4">
+                {success}
+              </p>
+            )}
             <form onSubmit={handleSignIn} className="space-y-4">
               <Field label="Email address" type="email" value={email}
-                onChange={setEmail} placeholder="reyes@reyesrebollar.com" />
+                onChange={setEmail} placeholder={siteConfig.email} />
               <Field label="Password" type="password" value={password}
                 onChange={setPassword} placeholder="••••••••" />
               {error && <p className="text-xs text-red-600">{error}</p>}
@@ -119,23 +205,24 @@ export default function ManagerLoginPage() {
           </>
         )}
 
-        {/* First-time setup */}
+        {/* First-time account setup */}
         {mode === "setup" && (
           <>
             <h1 className="text-sm font-semibold text-foreground mb-1">Create your account</h1>
             <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
-              Set up your manager account — no email confirmation needed.
+              Create your login credentials. Your administrator must also add you
+              to the company member list before you can access the dashboard.
             </p>
             <form onSubmit={handleSetup} className="space-y-4">
               <Field label="Email address" type="email" value={email}
-                onChange={setEmail} placeholder="reyes@reyesrebollar.com" />
+                onChange={setEmail} placeholder={siteConfig.email} />
               <Field label="New password" type="password" value={password}
                 onChange={setPassword} placeholder="Min. 8 characters" />
               <Field label="Confirm password" type="password" value={confirm}
                 onChange={setConfirm} placeholder="••••••••" />
               {error && <p className="text-xs text-red-600">{error}</p>}
               <Btn loading={loading} disabled={!email || !password || !confirm}>
-                Create Account &amp; Sign In
+                Create Account
               </Btn>
             </form>
             <button onClick={() => { setMode("signin"); reset(); }}
@@ -157,7 +244,7 @@ export default function ManagerLoginPage() {
               : (
                 <form onSubmit={handleForgot} className="space-y-4">
                   <Field label="Email address" type="email" value={email}
-                    onChange={setEmail} placeholder="reyes@reyesrebollar.com" />
+                    onChange={setEmail} placeholder={siteConfig.email} />
                   {error && <p className="text-xs text-red-600">{error}</p>}
                   <Btn loading={loading} disabled={!email}>Send Reset Link</Btn>
                 </form>
@@ -173,6 +260,8 @@ export default function ManagerLoginPage() {
     </div>
   );
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Field({ label, type, value, onChange, placeholder }: {
   label: string; type: string; value: string;

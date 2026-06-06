@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { COMPANY_ID } from "@/site.config";
 
 type Payment = {
   id: string;
@@ -88,12 +89,17 @@ export default function InvoicesPage() {
   const [payError, setPayError] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session || !session.user.email?.endsWith("@reyesrebollar.com")) {
-        router.replace("/manager/login"); return;
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { router.replace("/manager/login"); return; }
+      const { data: m } = await supabase.from("company_members")
+        .select("id, status").eq("user_id", session.user.id).eq("company_id", COMPANY_ID).single();
+      if (!m || m.status !== "active") {
+        await supabase.auth.signOut(); router.replace("/manager/login"); return;
       }
       loadAll();
-    });
+    };
+    init();
   }, [router]);
 
   const loadAll = async () => {

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monthly Payment Statement — 1107 Greenfield / 3J PML</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #e8ecf0;
+      color: #1a1a1a;
+    }
+
+    /* ── TOOLBAR (hidden on print) ── */
+    .toolbar {
+      background: #1a3a5c;
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 10pt;
+    }
+    .toolbar strong { font-size: 11pt; }
+    .toolbar .tip { opacity: 0.75; flex: 1; }
+    .btn {
+      background: #fff;
+      color: #1a3a5c;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-size: 10.5pt;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover { background: #dce9f5; }
+
+    /* ── PAGE ── */
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 24px auto;
+      background: #fff;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.15);
+      border-radius: 3px;
+      padding: 0.65in 0.75in 0.55in;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      border-bottom: 3px solid #1a3a5c;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .hdr .company-name { font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #1a3a5c; opacity: 0.6; margin-bottom: 3px; }
+    .hdr h1 { font-size: 22pt; font-weight: 800; color: #1a3a5c; }
+    .hdr .sub { font-size: 9.5pt; color: #666; margin-top: 4px; }
+    .hdr-right { text-align: right; }
+    .hdr-right .doc-label { font-size: 8pt; text-transform: uppercase; letter-spacing: 0.6px; color: #999; }
+    .hdr-right .doc-id { font-size: 10.5pt; font-weight: 700; color: #1a3a5c; margin-top: 3px; }
+
+    /* ── PARTIES ── */
+    .parties {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .party {
+      flex: 1;
+      border: 1px solid #d0dcea;
+      border-radius: 4px;
+      padding: 10px 13px;
+    }
+    .party h3 {
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1a3a5c;
+      border-bottom: 1px solid #e4edf5;
+      padding-bottom: 5px;
+      margin-bottom: 6px;
+    }
+    .party p { font-size: 9.5pt; line-height: 1.6; color: #333; }
+    .party .small { font-size: 8.5pt; color: #999; font-style: italic; margin-top: 3px; }
+
+    /* ── PROPERTY BAR ── */
+    .prop-bar {
+      background: #eef3f9;
+      border: 1px solid #c5d5e8;
+      border-radius: 4px;
+      padding: 9px 14px;
+      font-size: 9.5pt;
+      margin-bottom: 22px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .prop-bar strong { color: #1a3a5c; }
+
+    /* ── PAYMENT BREAKDOWN ── */
+    .pmt-box {
+      border: 2px solid #1a3a5c;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .pmt-box-header {
+      background: #1a3a5c;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      font-size: 10.5pt;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .pmt-lines {
+      display: flex;
+    }
+    .pmt-line {
+      flex: 1;
+      padding: 16px;
+      border-right: 1px solid #d0dcea;
+      text-align: center;
+    }
+    .pmt-line:last-child { border-right: none; }
+    .pmt-line .pl-label {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .pmt-line .pl-amt {
+      font-size: 17pt;
+      font-weight: 800;
+      color: #1a3a5c;
+    }
+    .pmt-line .pl-note { font-size: 8pt; color: #aaa; margin-top: 4px; }
+    .pmt-line.total-line { background: #f5f8fc; }
+    .pmt-line.total-line .pl-amt { font-size: 20pt; color: #0d2b45; }
+
+    /* ── PAYMENT SPLIT ── */
+    .split-section { margin-bottom: 22px; }
+    .split-title {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1a3a5c;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #d0dcea;
+    }
+    .split-row {
+      display: flex;
+      gap: 12px;
+    }
+    .split-card {
+      flex: 1;
+      border: 1px solid #c5d5e8;
+      border-radius: 4px;
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .split-card .sc-left { font-size: 9.5pt; color: #333; line-height: 1.5; }
+    .split-card .sc-name { font-weight: 700; color: #1a3a5c; font-size: 10pt; }
+    .split-card .sc-share { font-size: 8pt; color: #888; margin-top: 1px; }
+    .split-card .sc-amt {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #1a3a5c;
+      text-align: right;
+    }
+    .split-card .sc-note { font-size: 7.5pt; color: #aaa; text-align: right; margin-top: 2px; }
+
+    /* ── LOAN TERMS ── */
+    .terms {
+      background: #fafbfc;
+      border: 1px solid #e0e8f0;
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-size: 8.5pt;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 22px;
+      flex: 1;
+    }
+    .terms .terms-title {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1a3a5c;
+      margin-bottom: 7px;
+    }
+    .terms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 28px;
+    }
+    .term-row { display: flex; gap: 6px; }
+    .term-key { color: #999; min-width: 110px; }
+    .term-val { color: #333; font-weight: 500; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #d0dcea;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7.5pt;
+      color: #bbb;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; }
+      .toolbar { display: none; }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0.5in 0.65in 0.45in;
+        min-height: unset;
+      }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { size: letter; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div>
+    <strong>Monthly Payment Statement</strong> — 1107 Greenfield / 3J PML &nbsp;·&nbsp; Fixed document, valid for all 24 payments
+  </div>
+  <div class="tip">Print or save as PDF to include with each payment.</div>
+  <button class="btn" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div>
+      <div class="company-name">Reyes Rebollar Properties LLC</div>
+      <h1>Payment Statement</h1>
+      <div class="sub">Interest-Only Private Loan · 1107 Greenfield Drive, El Cajon, CA 92021</div>
+    </div>
+    <div class="hdr-right">
+      <div class="doc-label">Loan Number</div>
+      <div class="doc-id">RRBLLC-20260318</div>
+      <div style="font-size:8.5pt; color:#888; margin-top:4px;">Inst. No. 2026-0081942</div>
+      <div style="font-size:8.5pt; color:#888; margin-top:2px;">reyes@reyesrebollar.com</div>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div class="parties">
+    <div class="party">
+      <h3>Borrower(s)</h3>
+      <p>Mario Reyes Rebollar<br>Hipolito Reyes Rebollar</p>
+      <p class="small">Trustors — Deed of Trust</p>
+    </div>
+    <div class="party">
+      <h3>Lender(s)</h3>
+      <p>3J Ventures Inc. &nbsp;<span style="color:#aaa;">(50%)</span><br>Private Mortgage Lending Inc. &nbsp;<span style="color:#aaa;">(50%)</span><br>P.O. Box 2354, Rancho Santa Fe, CA 92067</p>
+    </div>
+    <div class="party">
+      <h3>Trustee / Servicer</h3>
+      <p>Investors Mortgage Funding Group Inc.<br>(760) 310-4084</p>
+      <p class="small">Escrow No. 164531R-AJ · Allison McCloskey</p>
+    </div>
+  </div>
+
+  <!-- PROPERTY -->
+  <div class="prop-bar">
+    <strong>Property:</strong> 1107 Greenfield Drive, El Cajon, CA 92021 &nbsp;·&nbsp;
+    APN: 484-101-02-00 &nbsp;·&nbsp;
+    <strong>Original &amp; Outstanding Principal: $475,000.00</strong> &nbsp;·&nbsp;
+    Rate: <strong>9.000% per annum, Interest Only</strong> &nbsp;·&nbsp;
+    Balloon Due: <strong>April 1, 2028</strong>
+  </div>
+
+  <!-- PAYMENT BREAKDOWN -->
+  <div class="pmt-box">
+    <div class="pmt-box-header">Monthly Payment Breakdown — Fixed for All 24 Payments</div>
+    <div class="pmt-lines">
+      <div class="pmt-line">
+        <div class="pl-label">Principal Applied</div>
+        <div class="pl-amt">$0.00</div>
+        <div class="pl-note">Interest-only loan</div>
+      </div>
+      <div class="pmt-line">
+        <div class="pl-label">Interest (9.000% / yr)</div>
+        <div class="pl-amt">$3,562.50</div>
+        <div class="pl-note">$475,000 × 9% ÷ 12</div>
+      </div>
+      <div class="pmt-line total-line">
+        <div class="pl-label">Total Monthly Payment</div>
+        <div class="pl-amt">$3,562.50</div>
+        <div class="pl-note">Same every month</div>
+      </div>
+      <div class="pmt-line">
+        <div class="pl-label">Outstanding Balance</div>
+        <div class="pl-amt">$475,000.00</div>
+        <div class="pl-note">Due in full Apr 1, 2028</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT SPLIT -->
+  <div class="split-section">
+    <div class="split-title">Payment Distribution — Total $3,562.50 split equally between both lenders</div>
+    <div class="split-row">
+      <div class="split-card">
+        <div class="sc-left">
+          <div class="sc-name">3J Ventures Inc.</div>
+          <div class="sc-share">50% ownership interest</div>
+          <div style="font-size:8.5pt; color:#666; margin-top:4px;">P.O. Box 2354<br>Rancho Santa Fe, CA 92067</div>
+        </div>
+        <div>
+          <div class="sc-amt">$1,781.25</div>
+          <div class="sc-note">per month</div>
+        </div>
+      </div>
+      <div class="split-card">
+        <div class="sc-left">
+          <div class="sc-name">Private Mortgage Lending Inc.</div>
+          <div class="sc-share">50% ownership interest</div>
+          <div style="font-size:8.5pt; color:#666; margin-top:4px;">P.O. Box 2354<br>Rancho Santa Fe, CA 92067</div>
+        </div>
+        <div>
+          <div class="sc-amt">$1,781.25</div>
+          <div class="sc-note">per month</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOAN TERMS -->
+  <div class="terms">
+    <div class="terms-title">Loan Terms &amp; Schedule Reference</div>
+    <div class="terms-grid">
+      <div class="term-row"><span class="term-key">Loan Amount:</span><span class="term-val">$475,000.00</span></div>
+      <div class="term-row"><span class="term-key">First Payment:</span><span class="term-val">May 1, 2026</span></div>
+      <div class="term-row"><span class="term-key">Interest Rate:</span><span class="term-val">9.000% per annum, Interest Only</span></div>
+      <div class="term-row"><span class="term-key">Final Payment:</span><span class="term-val">April 1, 2028</span></div>
+      <div class="term-row"><span class="term-key">Monthly Payment:</span><span class="term-val">$3,562.50 (all interest, no principal)</span></div>
+      <div class="term-row"><span class="term-key">Balloon Amount:</span><span class="term-val">$478,562.50 (principal + final interest)</span></div>
+      <div class="term-row"><span class="term-key">Loan Term:</span><span class="term-val">24 months</span></div>
+      <div class="term-row"><span class="term-key">Total Interest (24 mo):</span><span class="term-val">$85,500.00</span></div>
+      <div class="term-row"><span class="term-key">Late Fee:</span><span class="term-val">10% of payment ($356.25) if &gt;10 days late</span></div>
+      <div class="term-row"><span class="term-key">Deed Recorded:</span><span class="term-val">March 25, 2026 · Instrument No. 2026-0081942</span></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Reyes Rebollar Properties LLC &nbsp;·&nbsp; reyes@reyesrebollar.com &nbsp;·&nbsp; Loan No. RRBLLC-20260318 &nbsp;·&nbsp; APN 484-101-02-00 &nbsp;·&nbsp; Inst. No. 2026-0081942</div>
+    <div>Borrower-prepared statement for recordkeeping — not issued by lender</div>
+  </div>
+
+</div>
+
+</body>
+</html>

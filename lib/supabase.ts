@@ -7,8 +7,38 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key"
 );
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Multi-tenant platform types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** A real-estate client company on the propframe platform. */
+export type Company = {
+  id: string;
+  name: string;
+  slug: string;
+  status: "active" | "inactive" | "suspended";
+  created_at: string;
+  updated_at: string;
+};
+
+/** A staff member (manager/admin) belonging to a company. */
+export type CompanyMember = {
+  id: string;
+  user_id: string;           // references auth.users
+  company_id: string;        // references companies
+  role: "owner" | "admin" | "manager" | "viewer";
+  status: "active" | "invited" | "suspended";
+  created_at: string;
+  updated_at: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Core domain types (all company-scoped)
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type MaintenanceRequest = {
   id: string;
+  company_id: string;
   tenant_id: string;
   title: string;
   description: string | null;
@@ -20,6 +50,7 @@ export type MaintenanceRequest = {
 
 export type Lease = {
   id: string;
+  company_id: string;
   tenant_id: string;
   property_address: string;
   unit: string | null;
@@ -30,6 +61,7 @@ export type Lease = {
 
 export type Tenant = {
   id: string;
+  company_id: string;
   full_name: string | null;
   phone: string | null;
   unit: string | null;
@@ -38,6 +70,7 @@ export type Tenant = {
 
 export type Document = {
   id: string;
+  company_id: string;
   entity_type: string;
   entity_id: string;
   name: string;
@@ -51,6 +84,7 @@ export type Document = {
 
 export type Property = {
   id: string;
+  company_id: string;
   name: string;
   address: string;
   city: string;
@@ -65,6 +99,7 @@ export type Property = {
 
 export type Unit = {
   id: string;
+  company_id: string;
   property_id: string;
   unit_number: string;
   rent_amount: number;
@@ -79,6 +114,7 @@ export type Unit = {
 
 export type Invoice = {
   id: string;
+  company_id: string;
   tenant_id: string;
   lease_id: string | null;
   unit_id: string | null;
@@ -92,6 +128,7 @@ export type Invoice = {
 
 export type Payment = {
   id: string;
+  company_id: string;
   invoice_id: string;
   amount_paid: number;
   paid_at: string;
@@ -105,6 +142,7 @@ export type Payment = {
 
 export type Notice = {
   id: string;
+  company_id: string;
   type: "rent_reminder" | "late_rent" | "lease_renewal" | "entry_notice" | "maintenance" | "general";
   subject: string;
   body: string;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 import type { User } from "@supabase/supabase-js";
 
 type Doc = {
@@ -85,8 +86,8 @@ export default function TenantDocumentsPage() {
             <p className="text-sm text-muted-foreground mb-1">No documents have been shared with you yet.</p>
             <p className="text-xs text-muted-foreground">
               Contact your property manager at{" "}
-              <a href="mailto:reyes@reyesrebollar.com" className="underline hover:opacity-70">
-                reyes@reyesrebollar.com
+              <a href={`mailto:${siteConfig.email}`} className="underline hover:opacity-70">
+                {siteConfig.email}
               </a>
             </p>
           </div>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Log — 1107 Greenfield / 3J PML</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #e8ecf0;
+      color: #1a1a1a;
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: #1a3a5c;
+      color: #fff;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 9.5pt;
+    }
+    .toolbar strong { font-size: 10.5pt; }
+    .toolbar .tip { opacity: 0.7; flex: 1; }
+    .btn {
+      background: #fff;
+      color: #1a3a5c;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 4px;
+      font-size: 10pt;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover { background: #dce9f5; }
+
+    /* ── PAGE — landscape ── */
+    .page {
+      width: 11in;
+      min-height: 8.5in;
+      margin: 20px auto;
+      background: #fff;
+      box-shadow: 0 4px 28px rgba(0,0,0,0.14);
+      border-radius: 3px;
+      padding: 0.42in 0.55in 0.38in;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 3px solid #1a3a5c;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .hdr-left .co { font-size: 8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: #1a3a5c; opacity: 0.55; margin-bottom: 2px; }
+    .hdr-left h1 { font-size: 17pt; font-weight: 800; color: #1a3a5c; }
+    .hdr-left .sub { font-size: 8.5pt; color: #777; margin-top: 2px; }
+    .hdr-right { text-align: right; font-size: 8.5pt; color: #666; line-height: 1.6; }
+    .hdr-right strong { color: #1a3a5c; }
+
+    /* ── SUMMARY STRIP ── */
+    .summary {
+      display: flex;
+      gap: 1px;
+      background: #c5d5e8;
+      border: 1px solid #c5d5e8;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .sc {
+      flex: 1;
+      background: #fff;
+      padding: 7px 10px;
+    }
+    .sc.dark { background: #1a3a5c; }
+    .sc .sl { font-size: 7pt; text-transform: uppercase; letter-spacing: 0.4px; color: #999; margin-bottom: 2px; }
+    .sc.dark .sl { color: #8aafc8; }
+    .sc .sv { font-size: 10.5pt; font-weight: 700; color: #1a3a5c; }
+    .sc.dark .sv { color: #fff; }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      flex: 1;
+    }
+    thead tr { background: #1a3a5c; }
+    thead th {
+      color: #fff;
+      padding: 6px 8px;
+      text-align: right;
+      font-weight: 600;
+      font-size: 7.5pt;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+    thead th:nth-child(1) { text-align: center; width: 36px; }
+    thead th:nth-child(2) { text-align: left; }
+    thead th:nth-child(3) { text-align: left; }
+
+    /* Year group header */
+    tr.year-header td {
+      background: #dce9f5;
+      color: #1a3a5c;
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-bottom: 1px solid #b8cfe6;
+    }
+
+    tbody tr { border-bottom: 1px solid #edf1f6; }
+    tbody tr:hover { background: #f5f8fc; }
+    tbody tr.balloon { background: #fff8e6 !important; }
+    tbody tr.balloon td { color: #7a4800; font-weight: 700; border-bottom: 2px solid #e8b400; }
+
+    tbody td {
+      padding: 5px 8px;
+      text-align: right;
+      color: #333;
+      white-space: nowrap;
+    }
+    tbody td:nth-child(1) { text-align: center; color: #aaa; font-size: 7.5pt; }
+    tbody td:nth-child(2) { text-align: left; font-weight: 600; color: #1a3a5c; }
+    tbody td:nth-child(3) { text-align: left; color: #555; }
+
+    /* Editable cells */
+    td.editable {
+      color: #bbb;
+      font-style: italic;
+      cursor: text;
+      min-width: 90px;
+    }
+    td.editable:focus {
+      outline: 1px solid #1a3a5c;
+      background: #f0f6ff;
+      color: #1a3a5c;
+      font-style: normal;
+    }
+    td.editable.filled { color: #333; font-style: normal; }
+
+    /* Subtotal rows */
+    tr.subtotal td {
+      background: #f0f4f9;
+      font-weight: 700;
+      font-size: 8pt;
+      color: #1a3a5c;
+      border-top: 1.5px solid #b8cfe6;
+      border-bottom: 2px solid #b8cfe6;
+      padding: 5px 8px;
+    }
+    tr.subtotal td:nth-child(1) { text-align: right; }
+
+    /* Grand total */
+    tfoot tr td {
+      background: #1a3a5c;
+      color: #fff;
+      font-weight: 700;
+      font-size: 8.5pt;
+      padding: 6px 8px;
+      text-align: right;
+      border: none;
+    }
+    tfoot tr td:nth-child(1),
+    tfoot tr td:nth-child(2) { text-align: left; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 10px;
+      padding-top: 7px;
+      border-top: 1px solid #d8e4f0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7pt;
+      color: #bbb;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; }
+      .toolbar { display: none; }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0.35in 0.45in 0.3in;
+        width: 11in;
+        min-height: 8.5in;
+      }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      @page { size: 11in 8.5in landscape; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div><strong>Internal Payment Log</strong> — 1107 Greenfield / 3J PML &nbsp;·&nbsp; All 24 Payments · Landscape, fits one page</div>
+  <div class="tip">Click any gray cell to fill in payment details as each payment is made.</div>
+  <button class="btn" onclick="window.print()">🖨 Print / Save PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="co">Reyes Rebollar Properties LLC &nbsp;·&nbsp; reyes@reyesrebollar.com</div>
+      <h1>Loan Payment Log — Internal Record</h1>
+      <div class="sub">1107 Greenfield Drive, El Cajon, CA 92021 &nbsp;·&nbsp; APN: 484-101-02-00</div>
+    </div>
+    <div class="hdr-right">
+      <div><strong>Loan No.:</strong> RRBLLC-20260318</div>
+      <div><strong>Lenders:</strong> 3J Ventures Inc. (50%) &amp; Private Mortgage Lending Inc. (50%)</div>
+      <div><strong>Trustee:</strong> Investors Mortgage Funding Group Inc. &nbsp;·&nbsp; (760) 310-4084</div>
+      <div><strong>Instrument No.:</strong> 2026-0081942 &nbsp;·&nbsp; Recorded: March 25, 2026</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY STRIP -->
+  <div class="summary">
+    <div class="sc dark"><div class="sl">Principal Balance</div><div class="sv">$475,000.00</div></div>
+    <div class="sc"><div class="sl">Interest Rate</div><div class="sv">9.000% / yr · Interest Only</div></div>
+    <div class="sc"><div class="sl">Monthly Payment</div><div class="sv">$3,562.50</div></div>
+    <div class="sc"><div class="sl">Per Lender / Month</div><div class="sv">$1,781.25 × 2</div></div>
+    <div class="sc"><div class="sl">First Payment</div><div class="sv">May 1, 2026</div></div>
+    <div class="sc"><div class="sl">Last Regular Payment</div><div class="sv">March 1, 2028</div></div>
+    <div class="sc dark"><div class="sl">Balloon Due</div><div class="sv">April 1, 2028 · $478,562.50</div></div>
+    <div class="sc"><div class="sl">Total Interest</div><div class="sv">$85,500.00</div></div>
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Due Date</th>
+        <th>Description</th>
+        <th>Principal</th>
+        <th>Interest</th>
+        <th>Total Due</th>
+        <th>3J Ventures (50%)</th>
+        <th>PML Inc. (50%)</th>
+        <th>Balance</th>
+        <th>Date Paid</th>
+        <th>Method</th>
+        <th>Confirmation #</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- YEAR 1: 2026 -->
+      <tr class="year-header"><td colspan="13">— 2026 &nbsp;(Payments 1 – 8) —</td></tr>
+      <tr>
+        <td>1</td><td>May 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>2</td><td>Jun 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>3</td><td>Jul 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>4</td><td>Aug 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>5</td><td>Sep 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>6</td><td>Oct 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>7</td><td>Nov 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>8</td><td>Dec 1, 2026</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr class="subtotal">
+        <td colspan="2">2026 Subtotal</td><td></td>
+        <td>$0.00</td><td>$28,500.00</td><td>$28,500.00</td><td>$14,250.00</td><td>$14,250.00</td>
+        <td colspan="5"></td>
+      </tr>
+
+      <!-- YEAR 2: 2027 -->
+      <tr class="year-header"><td colspan="13">— 2027 &nbsp;(Payments 9 – 20) —</td></tr>
+      <tr>
+        <td>9</td><td>Jan 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>10</td><td>Feb 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>11</td><td>Mar 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>12</td><td>Apr 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>13</td><td>May 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>14</td><td>Jun 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>15</td><td>Jul 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>16</td><td>Aug 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>17</td><td>Sep 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>18</td><td>Oct 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>19</td><td>Nov 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>20</td><td>Dec 1, 2027</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr class="subtotal">
+        <td colspan="2">2027 Subtotal</td><td></td>
+        <td>$0.00</td><td>$42,750.00</td><td>$42,750.00</td><td>$21,375.00</td><td>$21,375.00</td>
+        <td colspan="5"></td>
+      </tr>
+
+      <!-- YEAR 3: 2028 -->
+      <tr class="year-header"><td colspan="13">— 2028 &nbsp;(Payments 21 – 24 · Balloon Due April 1) —</td></tr>
+      <tr>
+        <td>21</td><td>Jan 1, 2028</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>22</td><td>Feb 1, 2028</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr>
+        <td>23</td><td>Mar 1, 2028</td><td>Interest Payment</td>
+        <td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$1,781.25</td><td>$1,781.25</td><td>$475,000.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr class="balloon">
+        <td>24</td><td>Apr 1, 2028</td><td>⚠ Final Payment + Balloon</td>
+        <td>$475,000.00</td><td>$3,562.50</td><td>$478,562.50</td><td>$239,281.25</td><td>$239,281.25</td><td>$0.00</td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+        <td class="editable" contenteditable="true"></td>
+      </tr>
+      <tr class="subtotal">
+        <td colspan="2">2028 Subtotal</td><td></td>
+        <td>$475,000.00</td><td>$14,250.00</td><td>$489,250.00</td><td>$244,625.00</td><td>$244,625.00</td>
+        <td colspan="5"></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2">GRAND TOTAL — 24 Payments</td><td></td>
+        <td>$475,000.00</td><td>$85,500.00</td><td>$560,500.00</td><td>$280,250.00</td><td>$280,250.00</td>
+        <td colspan="5"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Reyes Rebollar Properties LLC &nbsp;·&nbsp; reyes@reyesrebollar.com &nbsp;·&nbsp; Loan No. RRBLLC-20260318 &nbsp;·&nbsp; APN 484-101-02-00</div>
+    <div>Internal recordkeeping document — not issued by lender &nbsp;·&nbsp; Late fee: 10% ($356.25) if payment not received within 10 days of due date</div>
+  </div>
+
+</div>
+
+<script>
+  // Mark cells as filled when content is entered
+  document.querySelectorAll('td.editable').forEach(td => {
+    td.addEventListener('input', () => {
+      td.classList.toggle('filled', td.textContent.trim().length > 0);
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -3,14 +3,7 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-
-const pillars = [
-  "Residential Holdings",
-  "Commercial Properties",
-  "El Cajon, California",
-  "Family Partnership",
-  "Est. 2023",
-];
+import { siteConfig } from "@/site.config";
 
 export function Hero() {
   return (
@@ -27,8 +20,8 @@ export function Hero() {
             />
             <div className="relative h-[360px] md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src="/el-cajon-aerial.jpg"
-                alt="El Cajon, California"
+                src={siteConfig.heroImagePath}
+                alt={siteConfig.heroImageAlt}
                 fill
                 className="object-cover object-center brightness-105"
                 priority
@@ -46,12 +39,13 @@ export function Hero() {
               className="font-display text-foreground leading-[1.1] tracking-tight"
               style={{ fontSize: "clamp(2.4rem, 5vw, 4.2rem)" }}
             >
-              Reyes Rebollar<br />Properties LLC
+              {siteConfig.companyName.split(" ").slice(0, 2).join(" ")}<br />
+              {siteConfig.companyName.split(" ").slice(2).join(" ")}
             </h1>
 
             {/* Animated pillar list */}
             <ul className="space-y-1.5 my-10">
-              {pillars.map((item, index) => (
+              {siteConfig.pillars.map((item, index) => (
                 <motion.li
                   key={item}
                   initial={{ opacity: 0.55 }}
@@ -73,11 +67,10 @@ export function Hero() {
             {/* Bottom: label + description + CTA */}
             <div>
               <p className="text-[0.62rem] tracking-[0.22em] uppercase text-terracotta mb-3">
-                Los Limones, Michoacán · El Cajon, California
+                {siteConfig.locationTagline}
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                A family real estate holding company building lasting value in
-                Southern California — rooted in legacy, guided by integrity.
+                {siteConfig.heroDescription}
               </p>
               <Link
                 href="/properties"

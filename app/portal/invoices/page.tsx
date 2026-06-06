@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 
 type Payment = {
   id: string;
@@ -124,7 +125,7 @@ export default function TenantInvoicesPage() {
             <p className="text-[0.6rem] uppercase tracking-wide text-muted-foreground mb-2">How to Pay</p>
             <p className="text-xs text-foreground leading-relaxed">
               We accept Zelle, Venmo, check, and cash. Please send payments to{" "}
-              <span className="font-medium">reyes@reyesrebollar.com</span> or contact your property manager for payment details.
+              <span className="font-medium">{siteConfig.email}</span> or contact your property manager for payment details.
             </p>
           </div>
         </div>

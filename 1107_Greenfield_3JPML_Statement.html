@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Payment Statement — 1107 Greenfield Drive</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 11pt;
+      color: #1a1a1a;
+      background: #f4f4f4;
+    }
+
+    /* Print / PDF output */
+    @media print {
+      body { background: white; }
+      .page { box-shadow: none; margin: 0; border-radius: 0; page-break-after: always; }
+      .no-print { display: none; }
+      @page { size: letter; margin: 0.6in; }
+    }
+
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 20px auto;
+      padding: 0.65in 0.75in;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 18px;
+      border-bottom: 3px solid #1a3a5c;
+      margin-bottom: 22px;
+    }
+    .header-left h1 {
+      font-size: 20pt;
+      font-weight: 700;
+      color: #1a3a5c;
+      letter-spacing: -0.5px;
+    }
+    .header-left .subtitle {
+      font-size: 9.5pt;
+      color: #555;
+      margin-top: 3px;
+    }
+    .header-right {
+      text-align: right;
+      font-size: 9.5pt;
+      color: #444;
+    }
+    .header-right .stmt-label {
+      font-size: 8.5pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+    }
+    .header-right .stmt-num {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1a3a5c;
+      margin-top: 2px;
+    }
+
+    /* ── PARTY BLOCK ── */
+    .parties {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 22px;
+    }
+    .party-block {
+      flex: 1;
+      background: #f7f9fc;
+      border: 1px solid #d8e4f0;
+      border-radius: 4px;
+      padding: 12px 14px;
+    }
+    .party-block h3 {
+      font-size: 8.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #1a3a5c;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #d0dcea;
+      padding-bottom: 4px;
+    }
+    .party-block p {
+      font-size: 10pt;
+      line-height: 1.55;
+      color: #333;
+    }
+    .party-block .role {
+      font-size: 8.5pt;
+      color: #777;
+      font-style: italic;
+    }
+
+    /* ── LOAN SUMMARY TABLE ── */
+    .section-title {
+      font-size: 9.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #1a3a5c;
+      margin: 0 0 8px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #c8d8ea;
+    }
+    .loan-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #c8d8ea;
+      border: 1px solid #c8d8ea;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .summary-cell {
+      background: #fff;
+      padding: 9px 12px;
+    }
+    .summary-cell .label {
+      font-size: 8pt;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+    .summary-cell .value {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #1a3a5c;
+    }
+    .summary-cell.highlight {
+      background: #1a3a5c;
+    }
+    .summary-cell.highlight .label { color: #afc5d8; }
+    .summary-cell.highlight .value { color: #fff; }
+
+    /* ── PROPERTY ── */
+    .property-bar {
+      background: #eef3f9;
+      border: 1px solid #c8d8ea;
+      border-radius: 4px;
+      padding: 9px 14px;
+      margin-bottom: 22px;
+      font-size: 10pt;
+    }
+    .property-bar span.pl { font-weight: 700; color: #1a3a5c; }
+
+    /* ── PAYMENT SCHEDULE TABLE ── */
+    .schedule-wrap { margin-bottom: 22px; }
+    table.schedule {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+    }
+    table.schedule thead tr {
+      background: #1a3a5c;
+      color: #fff;
+    }
+    table.schedule thead th {
+      padding: 8px 10px;
+      text-align: right;
+      font-weight: 600;
+      font-size: 8.5pt;
+      letter-spacing: 0.3px;
+    }
+    table.schedule thead th:first-child { text-align: left; }
+    table.schedule thead th:nth-child(2) { text-align: left; }
+
+    table.schedule tbody tr:nth-child(even) { background: #f5f8fb; }
+    table.schedule tbody tr:hover { background: #ebf2fa; }
+    table.schedule td {
+      padding: 6px 10px;
+      text-align: right;
+      border-bottom: 1px solid #e8edf3;
+      color: #333;
+    }
+    table.schedule td:first-child { text-align: center; color: #666; font-size: 9pt; }
+    table.schedule td:nth-child(2) { text-align: left; font-weight: 500; }
+
+    table.schedule tr.balloon-row {
+      background: #fff3cd !important;
+    }
+    table.schedule tr.balloon-row td {
+      font-weight: 700;
+      color: #7a4800;
+      border-bottom: 2px solid #e8b400;
+    }
+
+    table.schedule tr.paid-row td { color: #999; }
+    table.schedule tr.paid-row td:nth-child(7) { color: #2a7a3f; font-weight: 600; }
+
+    table.schedule tfoot tr.totals-row td {
+      background: #1a3a5c;
+      color: #fff;
+      font-weight: 700;
+      font-size: 9.5pt;
+      padding: 8px 10px;
+      border: none;
+    }
+    table.schedule tfoot tr.totals-row td:first-child { text-align: left; }
+
+    /* Paid / unpaid badges */
+    .badge {
+      display: inline-block;
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .badge-paid { background: #d4edda; color: #155724; }
+    .badge-pending { background: #e9ecef; color: #6c757d; }
+    .badge-balloon { background: #fff3cd; color: #856404; }
+
+    /* ── TERMS & NOTICES ── */
+    .terms-box {
+      background: #fafbfc;
+      border: 1px solid #dde5ef;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 22px;
+      font-size: 9pt;
+      color: #555;
+      line-height: 1.6;
+    }
+    .terms-box h3 {
+      font-size: 8.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #1a3a5c;
+      margin-bottom: 8px;
+    }
+    .terms-box ul { padding-left: 18px; }
+    .terms-box li { margin-bottom: 4px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 2px solid #1a3a5c;
+      margin-top: 28px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.5pt;
+      color: #888;
+    }
+    .footer .sig-line {
+      margin-top: 30px;
+      border-top: 1px solid #aaa;
+      width: 220px;
+      font-size: 8pt;
+      color: #666;
+      padding-top: 4px;
+    }
+
+    /* Print controls */
+    .no-print {
+      text-align: center;
+      margin: 16px auto;
+      width: 8.5in;
+    }
+    .btn-print {
+      background: #1a3a5c;
+      color: #fff;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 4px;
+      font-size: 11pt;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-print:hover { background: #14304f; }
+  </style>
+</head>
+<body>
+
+<div class="no-print">
+  <button class="btn-print" onclick="window.print()">🖨 Print / Save as PDF</button>
+  &nbsp;&nbsp;
+  <small style="color:#666">Use browser Print → "Save as PDF" to generate a PDF statement</small>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Loan Payment Statement</h1>
+      <div class="subtitle">Interest-Only Private Loan · 1107 Greenfield Drive</div>
+    </div>
+    <div class="header-right">
+      <div class="stmt-label">Statement</div>
+      <div class="stmt-num">Annual Schedule</div>
+      <div style="margin-top:4px; color:#555;">Issued: April 29, 2026</div>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div class="parties">
+    <div class="party-block">
+      <h3>Borrower(s)</h3>
+      <p>
+        Mario Reyes Rebollar<br>
+        Hipolito Reyes Rebollar
+      </p>
+      <p class="role" style="margin-top:4px;">Trustors under Deed of Trust</p>
+    </div>
+    <div class="party-block">
+      <h3>Lender(s)</h3>
+      <p>
+        3J Ventures Inc. <span style="color:#888;">(50%)</span><br>
+        Private Mortgage Lending Inc. <span style="color:#888;">(50%)</span><br>
+        P.O. Box 2354<br>
+        Rancho Santa Fe, CA 92067
+      </p>
+    </div>
+    <div class="party-block">
+      <h3>Trustee / Servicer</h3>
+      <p>
+        Investors Mortgage Funding Group Inc.<br>
+        <span style="color:#555;">(760) 310-4084</span>
+      </p>
+      <p class="role" style="margin-top:4px;">Allison McCloskey Escrow No. 164531R-AJ</p>
+    </div>
+  </div>
+
+  <!-- PROPERTY -->
+  <div class="property-bar">
+    <span class="pl">Property:</span> &nbsp;1107 Greenfield Drive, El Cajon, CA 92021 &nbsp;|&nbsp; APN: 484-101-02-00 &nbsp;|&nbsp; Deed of Trust recorded March 25, 2026 — Instrument No. 2026-0081942
+  </div>
+
+  <!-- LOAN SUMMARY -->
+  <div class="section-title">Loan Summary</div>
+  <div class="loan-summary">
+    <div class="summary-cell highlight">
+      <div class="label">Original Principal</div>
+      <div class="value">$475,000.00</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Interest Rate</div>
+      <div class="value">9.000% / yr</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Loan Type</div>
+      <div class="value">Interest Only</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Loan Term</div>
+      <div class="value">24 Months</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Monthly Payment</div>
+      <div class="value">$3,562.50</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">First Payment</div>
+      <div class="value">May 1, 2026</div>
+    </div>
+    <div class="summary-cell highlight">
+      <div class="label">Balloon Due</div>
+      <div class="value">April 1, 2028</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Balloon Amount</div>
+      <div class="value">$478,562.50</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Total Interest (24 mo)</div>
+      <div class="value">$85,500.00</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Late Fee (if &gt;10 days)</div>
+      <div class="value">10% · $356.25</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Current Balance</div>
+      <div class="value">$475,000.00</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Payments Remaining</div>
+      <div class="value">24</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT SCHEDULE -->
+  <div class="schedule-wrap">
+    <div class="section-title">Payment Schedule — All 24 Payments</div>
+    <table class="schedule">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Due Date</th>
+          <th>Principal</th>
+          <th>Interest</th>
+          <th>Total Payment</th>
+          <th>Principal Balance</th>
+          <th>Status</th>
+          <th>Date Paid</th>
+          <th>Confirmation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>May 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>2</td><td>Jun 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>3</td><td>Jul 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>4</td><td>Aug 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>5</td><td>Sep 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>6</td><td>Oct 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>7</td><td>Nov 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>8</td><td>Dec 1, 2026</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>9</td><td>Jan 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>10</td><td>Feb 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>11</td><td>Mar 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>12</td><td>Apr 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>13</td><td>May 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>14</td><td>Jun 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>15</td><td>Jul 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>16</td><td>Aug 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>17</td><td>Sep 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>18</td><td>Oct 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>19</td><td>Nov 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>20</td><td>Dec 1, 2027</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>21</td><td>Jan 1, 2028</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>22</td><td>Feb 1, 2028</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr><td>23</td><td>Mar 1, 2028</td><td>$0.00</td><td>$3,562.50</td><td>$3,562.50</td><td>$475,000.00</td><td><span class="badge badge-pending">Pending</span></td><td></td><td></td></tr>
+        <tr class="balloon-row">
+          <td>24</td>
+          <td>Apr 1, 2028 ⚠ BALLOON</td>
+          <td>$475,000.00</td>
+          <td>$3,562.50</td>
+          <td>$478,562.50</td>
+          <td>$0.00</td>
+          <td><span class="badge badge-balloon">Balloon</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="totals-row">
+          <td colspan="2">TOTALS (24 Payments)</td>
+          <td>$475,000.00</td>
+          <td>$85,500.00</td>
+          <td>$560,500.00</td>
+          <td>—</td>
+          <td colspan="3"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- TERMS -->
+  <div class="terms-box">
+    <h3>Loan Terms &amp; Important Notices</h3>
+    <ul>
+      <li><strong>Interest Only:</strong> Monthly payments of $3,562.50 cover interest only. The principal balance of $475,000.00 does not decrease until the balloon payment on April 1, 2028.</li>
+      <li><strong>Monthly Interest Calculation:</strong> $475,000 × 9.000% ÷ 12 = $3,562.50 per month</li>
+      <li><strong>Balloon Payment:</strong> The entire principal balance of $475,000.00 plus one month's interest ($3,562.50) totaling <strong>$478,562.50</strong> is due in full on April 1, 2028.</li>
+      <li><strong>Late Fee:</strong> A late charge of 10% of the overdue amount ($356.25) will be assessed if payment is not received within 10 days of the due date.</li>
+      <li><strong>Lenders:</strong> 3J Ventures Inc. (50%) and Private Mortgage Lending Inc. (50%) — P.O. Box 2354, Rancho Santa Fe, CA 92067</li>
+      <li><strong>Trustee:</strong> Investors Mortgage Funding Group Inc., (760) 310-4084</li>
+      <li><strong>Security:</strong> Payments secured by Deed of Trust recorded March 25, 2026, San Diego County Recorder, Instrument No. 2026-0081942</li>
+      <li><strong>Escrow:</strong> Allison McCloskey Escrow, Escrow No. 164531R-AJ</li>
+    </ul>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div>1107 Greenfield Drive, El Cajon, CA 92021 · APN 484-101-02-00</div>
+      <div style="margin-top:2px;">Statement prepared by: Reyes Rebollar &nbsp;|&nbsp; April 29, 2026</div>
+      <div class="sig-line">Authorized Signature &amp; Date</div>
+    </div>
+    <div style="text-align:right;">
+      <div>This document is an internal borrower-prepared record.</div>
+      <div style="margin-top:2px;">Not issued by lender. For recordkeeping only.</div>
+      <div class="sig-line" style="float:right;">Lender Acknowledgment (optional)</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { ManagerSidebar } from "@/components/ManagerSidebar";
+import { siteConfig } from "@/site.config";
 
 export const metadata: Metadata = {
-  title: "Manager Portal — Reyes Rebollar Properties LLC",
+  title: `Manager Portal — ${siteConfig.companyName}`,
 };
 
 export default function ManagerLayout({ children }: { children: React.ReactNode }) {

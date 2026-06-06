@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import { siteConfig } from "@/site.config";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://reyesrebollar.com/portal/dashboard",
+        emailRedirectTo: `${siteConfig.siteUrl}/portal/dashboard`,
       },
     });
 
@@ -35,14 +36,14 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="mb-10 text-center">
         <Image
-          src="/reyesrebollar_logo.png"
-          alt="Reyes Rebollar Properties"
+          src={siteConfig.logoPath}
+          alt={siteConfig.companyName}
           width={52}
           height={52}
           className="object-contain mx-auto mb-4 opacity-85"
         />
         <p className="font-display text-xl text-foreground">
-          Reyes Rebollar Properties
+          {siteConfig.companyName}
         </p>
         <p className="text-[0.65rem] tracking-[0.18em] uppercase text-muted-foreground mt-1">
           Tenant Portal
@@ -113,8 +114,8 @@ export default function LoginPage() {
 
       <p className="mt-8 text-xs text-muted-foreground">
         Questions?{" "}
-        <a href="mailto:reyes@reyesrebollar.com" className="hover:text-foreground transition-colors underline underline-offset-2">
-          reyes@reyesrebollar.com
+        <a href={`mailto:${siteConfig.email}`} className="hover:text-foreground transition-colors underline underline-offset-2">
+          {siteConfig.email}
         </a>
       </p>
     </div>

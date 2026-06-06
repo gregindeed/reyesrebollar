@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase, type Tenant, type Lease, type MaintenanceRequest } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 import type { User } from "@supabase/supabase-js";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -149,7 +150,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="bg-card border border-border/50 rounded-xl p-6">
-              <p className="text-sm text-muted-foreground">No lease information on file yet. Contact us at reyes@reyesrebollar.com.</p>
+              <p className="text-sm text-muted-foreground">No lease information on file yet. Contact us at {siteConfig.email}.</p>
             </div>
           )}
         </div>

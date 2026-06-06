@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import { siteConfig } from "@/site.config";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -34,10 +35,10 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="mb-10 text-center">
-        <Image src="/reyesrebollar_logo.png" alt="RRP" width={48} height={48}
+        <Image src={siteConfig.logoPath} alt={siteConfig.companyShort} width={48} height={48}
           className="object-contain mx-auto mb-4 opacity-85" />
         <p className="text-xl font-light tracking-wide text-foreground">
-          Reyes Rebollar Properties
+          {siteConfig.companyName}
         </p>
         <p className="text-[0.62rem] tracking-[0.18em] uppercase text-terracotta mt-1">
           Manager Portal

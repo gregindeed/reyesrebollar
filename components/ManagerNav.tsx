@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { siteConfig } from "@/site.config";
 
 const links = [
   { href: "/manager/dashboard", label: "Dashboard" },
@@ -24,9 +25,9 @@ export function ManagerNav({ email }: { email?: string }) {
       <div className="container mx-auto px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/manager/dashboard" className="flex items-center gap-3">
-            <Image src="/reyesrebollar_logo.png" alt="RRP" width={30} height={30} className="object-contain opacity-85" />
+            <Image src={siteConfig.logoPath} alt={siteConfig.companyShort} width={30} height={30} className="object-contain opacity-85" />
             <div>
-              <p className="text-xs font-medium leading-tight">Reyes Rebollar</p>
+              <p className="text-xs font-medium leading-tight">{siteConfig.companyShort}</p>
               <p className="text-[0.58rem] tracking-[0.16em] uppercase text-terracotta leading-tight">Manager</p>
             </div>
           </Link>

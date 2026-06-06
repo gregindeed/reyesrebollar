@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { COMPANY_ID } from "@/site.config";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -86,8 +87,10 @@ export default function ManagerDashboard() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/manager/login"); return; }
-      if (!session.user.email?.endsWith("@reyesrebollar.com")) {
-        setUnauthorized(true); setLoading(false); return;
+      const { data: m } = await supabase.from("company_members")
+        .select("id, status").eq("user_id", session.user.id).eq("company_id", COMPANY_ID).single();
+      if (!m || m.status !== "active") {
+        await supabase.auth.signOut(); setUnauthorized(true); setLoading(false); return;
       }
       setUser(session.user);
 

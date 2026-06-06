@@ -13,6 +13,7 @@ import { HeroSection }             from "./HeroSection";
 import { OpeningStatementSection } from "./OpeningStatementSection";
 import { OriginStorySection }      from "./OriginStorySection";
 import { PillarsSection }          from "./PillarsSection";
+import { RegionsSection }          from "./RegionsSection";
 import { HoldingsSection }         from "./HoldingsSection";
 import { TeamSection }             from "./TeamSection";
 import { TestimonialsSection }     from "./TestimonialsSection";
@@ -24,6 +25,7 @@ export const sectionRegistry: Record<string, React.ComponentType> = {
   "opening-statement":  OpeningStatementSection,
   "origin-story":       OriginStorySection,
   "pillars":            PillarsSection,
+  "regions":            RegionsSection,
   "holdings":           HoldingsSection,
   "team":               TeamSection,
   "testimonials":       TestimonialsSection,

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { COMPANY_ID } from "@/site.config";
 import { Heading, Text } from "@radix-ui/themes";
 import type { User } from "@supabase/supabase-js";
 
@@ -42,8 +43,10 @@ export default function ManagerRequestsPage() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.replace("/manager/login"); return; }
-      if (!session.user.email?.endsWith("@reyesrebollar.com")) {
-        router.replace("/manager/login"); return;
+      const { data: m } = await supabase.from("company_members")
+        .select("id, status").eq("user_id", session.user.id).eq("company_id", COMPANY_ID).single();
+      if (!m || m.status !== "active") {
+        await supabase.auth.signOut(); router.replace("/manager/login"); return;
       }
       setUser(session.user);
       await fetchRequests();

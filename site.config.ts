@@ -97,6 +97,30 @@ export const siteConfig = {
     // { quote: "Working with Reyes Rebollar was seamless...", author: "Jane D.", role: "Tenant" },
   ] as Array<{ quote: string; author: string; role: string }>,
 
+  // ── Regions (used by RegionsSection — no addresses, privacy-safe) ──────────
+  regionsLabel:   "Where We Operate",
+  regionsHeading: "Rooted on both sides of the border",
+  regionsIntro:
+    "Our holdings span communities we know personally — from Southern California " +
+    "to the family's homeland in Mexico. We invest where our roots run deepest.",
+  regions: [
+    {
+      name:    "San Diego County",
+      area:    "California, USA",
+      blurb:   "Residential and commercial holdings across El Cajon and the greater San Diego area.",
+    },
+    {
+      name:    "Baja California",
+      area:    "Mexico",
+      blurb:   "Cross-border investments in the communities that bridge our two homes.",
+    },
+    {
+      name:    "Michoacán",
+      area:    "Mexico",
+      blurb:   "Where the family story began — and where our roots will always remain.",
+    },
+  ] as Array<{ name: string; area: string; blurb: string }>,
+
   // ── Contact CTA (used by ContactCTASection) ───────────────────────────────
   contactCTA: {
     heading:    "Ready to find your next property?",
@@ -123,7 +147,7 @@ export const siteConfig = {
     "opening-statement",
     "origin-story",
     "pillars",
-    "holdings",
+    "regions",
     "closing-quote",
   ] as string[],
 
