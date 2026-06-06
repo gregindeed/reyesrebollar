@@ -1,67 +1,71 @@
 import Link from "next/link";
+import { siteConfig } from "@/site.config";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 mt-auto">
-      <div className="container mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-10">
-          <div>
-            <p className="font-display text-lg text-foreground mb-1">
-              Reyes Rebollar Properties LLC
+    <footer className="bg-ink text-on-ink mt-auto">
+      <div className="container mx-auto px-6 md:px-8 py-16">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-12">
+          <div className="max-w-xs">
+            <p className="font-display text-2xl mb-2">
+              {siteConfig.companyName}
             </p>
-            <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground">
-              El Cajon, California
+            <p className="eyebrow text-white/55">
+              {siteConfig.city}
             </p>
-            <p className="text-xs text-muted-foreground mt-5">
-              © {new Date().getFullYear()} Reyes Rebollar Properties LLC
+            <p className="text-sm text-white/55 mt-6 leading-relaxed">
+              {siteConfig.subtitle} · Est. 2023
             </p>
           </div>
 
-          <div className="flex gap-14">
+          <div className="flex flex-wrap gap-12 md:gap-16">
             <div>
-              <p className="text-[0.65rem] tracking-[0.2em] uppercase text-muted-foreground mb-4">
-                Navigate
-              </p>
+              <p className="eyebrow text-white/45 mb-4">Navigate</p>
               <div className="flex flex-col gap-3">
-                <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/" className="text-sm text-white/70 hover:text-on-ink transition-colors">
                   Home
                 </Link>
-                <Link href="/properties" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/properties" className="text-sm text-white/70 hover:text-on-ink transition-colors">
                   Properties
+                </Link>
+                <Link href="/about" className="text-sm text-white/70 hover:text-on-ink transition-colors">
+                  About
                 </Link>
               </div>
             </div>
             <div>
-              <p className="text-[0.65rem] tracking-[0.2em] uppercase text-muted-foreground mb-4">
-                Contact
-              </p>
+              <p className="eyebrow text-white/45 mb-4">Contact</p>
               <a
-                href="mailto:reyes@reyesrebollar.com"
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                href={`mailto:${siteConfig.email}`}
+                className="text-sm text-white/70 hover:text-on-ink transition-colors"
               >
-                reyes@reyesrebollar.com
+                {siteConfig.email}
               </a>
             </div>
             <div>
-              <p className="text-[0.65rem] tracking-[0.2em] uppercase text-muted-foreground mb-4">
-                Admin
-              </p>
+              <p className="eyebrow text-white/45 mb-4">Access</p>
               <div className="flex flex-col gap-3">
                 <Link
-                  href="/manager/login"
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Manager Portal
-                </Link>
-                <Link
                   href="/portal/login"
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-white/70 hover:text-on-ink transition-colors"
                 >
                   Tenant Portal
+                </Link>
+                <Link
+                  href="/manager/login"
+                  className="text-sm text-white/70 hover:text-on-ink transition-colors"
+                >
+                  Manager Portal
                 </Link>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-white/10 mt-14 pt-6">
+          <p className="text-xs text-white/45">
+            © {new Date().getFullYear()} {siteConfig.companyName}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

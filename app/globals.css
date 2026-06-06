@@ -1,11 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* ── Radix Themes overrides — map to our earth tone palette ── */
+/* ── Radix Themes overrides — structural only, no color values here ── */
+/* Brand colors are injected by components/ThemeInjector.tsx            */
 .radix-themes {
-  /* Page background: warm sand */
-  --color-background: oklch(0.93 0.02 80);
-  /* Use Geist as the type face throughout */
   --default-font-family: var(--font-geist-sans), system-ui, sans-serif;
   --heading-font-family: var(--font-geist-sans), system-ui, sans-serif;
   --heading-font-weight: 300;
@@ -51,54 +49,7 @@
   --radius-2xl: calc(var(--radius) + 10px);
 }
 
-:root {
-  /* Subtle rounding — organic, not techy */
-  --radius: 0.25rem;
-
-  /* Warm sand linen — like the walls of an old hacienda */
-  --background: oklch(0.93 0.02 80);
-  /* Dark warm clay — deep, grounded */
-  --foreground: oklch(0.17 0.025 48);
-
-  /* Near-white warm card — slightly lighter than background */
-  --card: oklch(0.97 0.012 78);
-  --card-foreground: oklch(0.17 0.025 48);
-
-  --popover: oklch(0.97 0.012 78);
-  --popover-foreground: oklch(0.17 0.025 48);
-
-  /* Deep umber — used for CTAs, interactive accents */
-  --primary: oklch(0.35 0.055 45);
-  --primary-foreground: oklch(0.95 0.015 78);
-
-  /* Warm stone secondary */
-  --secondary: oklch(0.88 0.02 78);
-  --secondary-foreground: oklch(0.17 0.025 48);
-
-  /* Muted warm — for subtle backgrounds */
-  --muted: oklch(0.88 0.02 78);
-  --muted-foreground: oklch(0.50 0.022 65);
-
-  /* Accent matches muted */
-  --accent: oklch(0.88 0.02 78);
-  --accent-foreground: oklch(0.17 0.025 48);
-
-  --destructive: oklch(0.577 0.245 27.325);
-
-  /* Warm tan border — barely there */
-  --border: oklch(0.83 0.024 75);
-  --input: oklch(0.83 0.024 75);
-  --ring: oklch(0.35 0.055 45);
-
-  --sidebar: oklch(0.93 0.02 80);
-  --sidebar-foreground: oklch(0.17 0.025 48);
-  --sidebar-primary: oklch(0.35 0.055 45);
-  --sidebar-primary-foreground: oklch(0.95 0.015 78);
-  --sidebar-accent: oklch(0.88 0.02 78);
-  --sidebar-accent-foreground: oklch(0.17 0.025 48);
-  --sidebar-border: oklch(0.83 0.024 75);
-  --sidebar-ring: oklch(0.35 0.055 45);
-}
+/* :root {} color block removed — all tokens injected by ThemeInjector */
 
 @layer base {
   * {
@@ -109,14 +60,21 @@
   }
 }
 
-/* Terracotta — used as a decorative overline color */
-.text-terracotta {
-  color: oklch(0.52 0.11 42);
+/* .text-terracotta removed — injected by ThemeInjector per deployment */
+
+/* Display font — refined modern serif (Fraunces) for marketing headings */
+.font-display {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  font-optical-sizing: auto;
 }
 
-/* Display font — clean light Geist for headings */
-.font-display {
+/* Eyebrow / overline label — consistent premium kicker */
+.eyebrow {
   font-family: var(--font-geist-sans), sans-serif;
-  font-weight: 300;
-  letter-spacing: -0.025em;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 500;
 }

@@ -16,8 +16,9 @@ export const siteConfig = {
   companyShort:  "Reyes Rebollar",
   subtitle:      "Real Estate Holdings",
   logoPath:      "/reyesrebollar_logo.png",
-  heroImagePath: "/el-cajon-aerial.jpg",
-  heroImageAlt:  "El Cajon, California",
+  heroImagePath:    "/images/herigate_img.png",
+  heroImageAlt:     "Michoacán countryside at dawn — the roots of the family",
+  heroImageCaption: "Los Limones, Michoacán",
 
   // ── URLs ──────────────────────────────────────────────────────────────────
   siteUrl:          "https://reyesrebollar.com",
@@ -45,38 +46,42 @@ export const siteConfig = {
     "Southern California — rooted in legacy, guided by integrity.",
 
   openingStatement:
-    "From the lime groves of Los Limones to the hills of El Cajon — " +
-    "we carry the same values our family has always known.",
+    "From Michoacán to Southern California — " +
+    "we carry the values our family has always known.",
 
   originSectionLabel: "From Los Limones, Michoacán",
   originHeading:      "Roots that run deep",
   originParagraphs: [
     "The Reyes Rebollar family story begins in the fertile lands of Los Limones — a town named for the lime groves that generations of our family cultivated. Every season brought rich harvests, but more importantly, it planted values that would outlast any crop.",
-    "Hard work. Integrity. Family. These weren't lessons taught in a classroom — they were lived in the fields, passed quietly from one generation to the next. When the family came to California, they brought those values with them, whole and intact. The landscape changed. The principles didn't.",
+    "When the family crossed into California, they left the soil behind but carried the spirit whole and intact. The landscape changed. The principles never did.",
     "Reyes Rebollar Properties LLC was founded on that understanding. Each property in our portfolio is not just an asset — it is a commitment, a piece of something we are building to last.",
   ],
+  originImagePath: "/images/loslimon_img.png",
+  originImageAlt:  "The lime groves of Los Limones, Michoacán",
 
   closingQuote:
     "\"From the soil of Michoacán to the streets of California — " +
     "our roots run deep, and our future grows bright.\"",
 
-  // ── Values ────────────────────────────────────────────────────────────────
+  // ── Pillars (the spirit the family carries) ───────────────────────────────
+  pillarsLabel:   "The Spirit We Carry",
+  pillarsHeading: "Three roots. One legacy.",
+  pillarsIntro:
+    "From the lime groves of Los Limones, the family brought more than memory — " +
+    "they brought a way of living. Three principles, never set down, never strayed from.",
+
   values: [
     {
-      title: "Honesty & Integrity",
-      body:  "Our word is our bond — every transaction and relationship conducted with the same straightforward honesty our family has always lived by.",
-    },
-    {
       title: "Hard Work",
-      body:  "From the lime groves at dawn to managing properties today, what you build is only as strong as the effort you put in.",
+      body:  "Long before the first property, there were the groves — and work that began before sunrise and ended well after dark. That same tireless effort is poured into everything we hold today. We have never feared the long road, because we have always known it is the only one that leads somewhere worth going.",
     },
     {
-      title: "Long-Term Vision",
-      body:  "Like farmers who plant for future harvests, we build for generations — with patience, foresight, and a commitment to lasting value.",
+      title: "Resilience",
+      body:  "Seasons fail. Markets turn. The family has weathered both and never once let go of the path. What began in Los Limones did not survive by luck — it survived by refusing to quit. We carry that same resolve: steady through every storm, never tiring of the call.",
     },
     {
-      title: "Family First",
-      body:  "Every decision is made with the collective good in mind. Our strength comes from unity, just as a grove is stronger than a single tree.",
+      title: "Integrity",
+      body:  "A handshake in the grove meant something — and it still does. We do what we say, and we say only what is true. Every tenant, partner, and neighbor is owed the same honesty our family was raised on, because a legacy built on anything less is no legacy at all.",
     },
   ],
 
@@ -117,6 +122,7 @@ export const siteConfig = {
     "hero",
     "opening-statement",
     "origin-story",
+    "pillars",
     "holdings",
     "closing-quote",
   ] as string[],
@@ -129,22 +135,25 @@ export const siteConfig = {
   // All colors use OKLCH. Swap these values to fully retheme a deployment.
   // Radix accent/gray must match a valid Radix UI Themes color name.
   theme: {
-    background:  "oklch(0.93 0.02 80)",    // warm sand
-    foreground:  "oklch(0.17 0.025 48)",   // dark warm clay
-    card:        "oklch(0.97 0.012 78)",
-    primary:     "oklch(0.35 0.055 45)",   // deep umber
-    primaryFg:   "oklch(0.95 0.015 78)",
-    secondary:   "oklch(0.88 0.02 78)",
-    muted:       "oklch(0.88 0.02 78)",
-    mutedFg:     "oklch(0.50 0.022 65)",
-    accent:      "oklch(0.88 0.02 78)",
-    accentFg:    "oklch(0.17 0.025 48)",
-    border:      "oklch(0.83 0.024 75)",   // warm tan
-    ring:        "oklch(0.35 0.055 45)",
-    terracotta:  "oklch(0.52 0.11 42)",    // decorative overline color
-    radius:      "0.25rem",
-    radixAccent: "bronze",
-    radixGray:   "sand",
+    background:  "oklch(0.987 0.002 200)", // clean cool white
+    foreground:  "oklch(0.25 0.008 250)",  // charcoal
+    card:        "oklch(0.965 0.004 200)", // soft panel
+    primary:     "oklch(0.27 0.010 255)",  // charcoal ink (CTAs)
+    primaryFg:   "oklch(0.98 0.003 200)",
+    secondary:   "oklch(0.95 0.004 200)",
+    muted:       "oklch(0.95 0.004 200)",
+    mutedFg:     "oklch(0.49 0.012 250)",  // cool gray
+    accent:      "oklch(0.94 0.018 150)",  // faint sage wash
+    accentFg:    "oklch(0.34 0.045 150)",
+    border:      "oklch(0.905 0.005 220)", // cool hairline
+    ring:        "oklch(0.52 0.05 150)",   // sage focus
+    terracotta:  "oklch(0.52 0.052 150)",  // muted sage accent (overlines)
+    sageLight:   "oklch(0.74 0.058 150)",  // sage for dark backgrounds
+    ink:         "oklch(0.205 0.012 255)", // cool charcoal (dark sections)
+    inkFg:       "oklch(0.95 0.004 200)",  // light text on ink
+    radius:      "0.45rem",
+    radixAccent: "grass",
+    radixGray:   "sage",
   },
 
 } as const;
